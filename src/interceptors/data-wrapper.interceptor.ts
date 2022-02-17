@@ -10,19 +10,15 @@ export function dataWrapper(dataKey: string) {
     return UseInterceptors(new DataWrapperInterceptor(dataKey))
 }
 
-export interface Response<T> {
-    data: object;
-}
-
-export class DataWrapperInterceptor implements NestInterceptor<object, Response<object>> {
+export class DataWrapperInterceptor implements NestInterceptor {
 
     constructor(private dataKey: string) {
     }
-
+    
     intercept(
         context: ExecutionContext,
         next: CallHandler<unknown>
-    ): Observable<any> {
+    ): Observable<object> {
 
         return next.handle().pipe(map((data: unknown) => ({[this.dataKey]: data})))
 

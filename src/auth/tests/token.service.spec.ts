@@ -3,14 +3,13 @@ import {JwtService} from "@nestjs/jwt";
 import {createMock, DeepMocked} from "@golevelup/ts-jest";
 import {TokenService} from "../services/token.service";
 import {UsersExampleBuilder} from "../../../test/example_fatcories/users.example-builder";
-
+import * as _ from 'lodash';
 
 
 describe('TokenServiceTest', () => {
     let tokenService: TokenService
     let jwtServiceMock: DeepMocked<JwtService>
     let userExampleFactory: UsersExampleBuilder
-    const _ = require('lodash')
 
     beforeEach(async () => {
         jest.clearAllMocks()

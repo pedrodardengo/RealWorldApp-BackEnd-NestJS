@@ -3,7 +3,7 @@ import {map, Observable} from "rxjs";
 import {plainToInstance} from "class-transformer";
 
 interface ClassConstructor {
-    new(...args: any[]): {}
+    new(...args: unknown[]): unknown
 }
 
 export function securityWrapper(dto: ClassConstructor) {
@@ -22,10 +22,10 @@ export class SecurityInterceptor implements NestInterceptor {
     intercept(
         context: ExecutionContext,
         next: CallHandler<unknown>
-    ): Observable<any> {
+    ): Observable<unknown> {
 
         return next.handle().pipe(
-            map((data: any) => {
+            map((data: unknown) => {
                 return plainToInstance(this.dto, data, {
                     excludeExtraneousValues: true
                 })

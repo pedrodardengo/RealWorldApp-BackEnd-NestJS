@@ -18,7 +18,7 @@ export class AuthService {
     ) {}
 
     async login(loginData: LoginDto): Promise<TokenizedUser> {
-        let user = await this.authenticateUser(loginData.email, loginData.password)
+        const user = await this.authenticateUser(loginData.email, loginData.password)
         return this.tokenService.addTokenToUser(user)
     }
 

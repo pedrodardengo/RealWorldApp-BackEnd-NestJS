@@ -80,7 +80,7 @@ describe('UsersService', () => {
 
     it('should register the user and return it with a token when user is valid', async () => {
         //Arrange
-        let incomingUser = Object.assign({}, userExample.user)
+        const incomingUser = userExample.user
         userExample.user.password = 'aHash'
         userExample.tokenizedUser.password = 'aHash'
         repoMock.findOne.mockReturnValue(null)
@@ -111,22 +111,21 @@ describe('UsersService', () => {
             )
 
             //Act
-            const tryFinding = usersService.findUser(findOption)
+            const tryFinding = usersService.getUser(findOption)
 
             //Assert
             expect(_.isEqual(userExample.tokenizedUser, await tryFinding)).toBe(true)
         }
     );
 
-    it.each([true, false])
-    (
+    it.each([true, false])(
         'should (not) throw error when trying to find a user that does not exists and (un)allowed to throw',
         async (shouldThrow) => {
             repoMock.findOne.mockReturnValue(null)
             const findOption = {id: userExample.user.id, email: userExample.user.email, username: userExample.user.username}
 
             //Act
-            const tryFinding = usersService.findUser(findOption, shouldThrow)
+            const tryFinding = usersService.getUser(findOption, shouldThrow)
 
             //Assert
             if (shouldThrow) await expect(async () => {await tryFinding}).rejects.toThrow(USER_MESSAGES.USER_NOT_FOUND)
@@ -136,13 +135,13 @@ describe('UsersService', () => {
 
     it('should update user', async () => {
         //Arrange
-        let updateData = Object.assign({}, userExample.user)
+        const updateData = Object.assign({}, userExample.user)
 
         const userExample2 = new UsersExampleBuilder()
         userExample2.user.id = updateData.id
-        let userFromDb = Object.assign({}, userExample2.user)
+        const userFromDb = Object.assign({}, userExample2.user)
 
-        let returnedUser = userExample.tokenizedUser
+        const returnedUser = userExample.tokenizedUser
         returnedUser.password = 'aHash'
 
         repoMock.findOne.mockReturnValue(userFromDb)

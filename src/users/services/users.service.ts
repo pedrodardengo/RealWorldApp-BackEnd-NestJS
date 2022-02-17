@@ -37,13 +37,13 @@ export class UsersService {
         return user
     }
 
-    async getUserWithToken(option: FindOption, throwIfNotFound: boolean = true): Promise<TokenizedUser> {
-        let user = await this.findUser(option, throwIfNotFound)
+    async getUserWithToken(option: FindOption, throwIfNotFound = true): Promise<TokenizedUser> {
+        const user = await this.findUser(option, throwIfNotFound)
         if (!user) return null
         return this.tokenService.addTokenToUser(user)
     }
 
-    async getUser(option: FindOption, throwIfNotFound: boolean = true): Promise<User> {
+    async getUser(option: FindOption, throwIfNotFound = true): Promise<User> {
         return await this.findUser(option, throwIfNotFound)
     }
 

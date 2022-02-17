@@ -17,7 +17,7 @@ export class ProfileService {
     ) {}
 
     async getProfile(id: number, profileUsername: string): Promise<ProfileDto> {
-        let follower = await this.userRepo.createQueryBuilder("U")
+        const follower = await this.userRepo.createQueryBuilder("U")
             .innerJoinAndSelect(
                 FollowRelation, "F", "U.id = F.userId AND U.username = :username",
                 {username: profileUsername}
