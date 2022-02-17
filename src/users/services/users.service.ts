@@ -14,7 +14,7 @@ import {USER_MESSAGES} from "../exceptions/messages.exceptions";
 export class UsersService {
 
     constructor(
-        @InjectRepository(User) private repo: Repository<User>,
+        @InjectRepository(User) private usersRepo: Repository<User>,
         private hashService: HashService,
         private tokenService: TokenService
     ) {}
@@ -22,37 +22,51 @@ export class UsersService {
     async registerUser(incomingUser: CreateUserDto): Promise<TokenizedUser> {
         await this.throwIfUserExists(incomingUser)
         incomingUser.password = await this.hashService.hashPassword(incomingUser.password)
-        let user = await this.repo.create(incomingUser)
-        user = await this.repo.save(user)
+        let user = await this.usersRepo.create(incomingUser)
+        user = await this.usersRepo.save(user)
         return await this.tokenService.addTokenToUser(user)
     }
 
-    async findUser(option: FindOption, throwIfNotFound: boolean = true): Promise<TokenizedUser> {
+    private async findUser(option: FindOption, throwIfNotFound: boolean): Promise<User> {
         let user = null
-        if (option.id) user = await this.repo.findOne(option.id)
-        if (option.email && !user) user = await this.repo.findOne({email: option.email})
-        if (option.username && !user) user = await this.repo.findOne({username: option.username})
+        if (option.id) user = await this.usersRepo.findOne(option.id)
+        if (option.email && !user) user = await this.usersRepo.findOne({email: option.email})
+        if (option.username && !user) user = await this.usersRepo.findOne({username: option.username})
         if (!user && throwIfNotFound) throw new NotFoundException(USER_MESSAGES.USER_NOT_FOUND)
+        else if (!user) return null
+        return user
+    }
+
+    async getUserWithToken(option: FindOption, throwIfNotFound: boolean = true): Promise<TokenizedUser> {
+        let user = await this.findUser(option, throwIfNotFound)
         if (!user) return null
         return this.tokenService.addTokenToUser(user)
+    }
+
+    async getUser(option: FindOption, throwIfNotFound: boolean = true): Promise<User> {
+        return await this.findUser(option, throwIfNotFound)
     }
 
     async update(id: number, updateUserData: UpdateUserDto): Promise<TokenizedUser> {
         if (updateUserData.password) {
             updateUserData.password = await this.hashService.hashPassword(updateUserData.password)
         }
-        let user = await this.findUser({id})
+        let user = await this.getUserWithToken({id})
         user = Object.assign(user, updateUserData)
-        return await this.repo.save(user)
+        return await this.usersRepo.save(user)
     }
 
     private async throwIfUserExists(user: CreateUserDto): Promise<void> {
-        const [foundUserByEmail, foundUserByUsername] = await Promise.all([
-            this.repo.findOne({email: user.email}),
-            this.repo.findOne({username: user.username})
-        ])
-        if (foundUserByEmail) throw new BadRequestException(USER_MESSAGES.EMAIL_ALREADY_EXISTS)
-        if (foundUserByUsername) throw new BadRequestException(USER_MESSAGES.USERNAME_ALREADY_EXISTS)
+        const dataFound = await this.usersRepo.createQueryBuilder()
+            .select(['email', 'username'])
+            .where(
+                "email = :email OR username = :username",
+                {email: user.email, username: user.username }
+            )
+            .getRawOne()
+        if (dataFound === undefined) return
+        if (dataFound.email === user.email) throw new BadRequestException(USER_MESSAGES.EMAIL_ALREADY_EXISTS)
+        if (dataFound.username === user.username) throw new BadRequestException(USER_MESSAGES.USERNAME_ALREADY_EXISTS)
     }
 
     // async remove(username: string): Promise<User> {

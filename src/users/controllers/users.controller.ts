@@ -11,19 +11,18 @@ import {UserDto} from "../dto/user.dto";
 @Controller('/user')
 @securityWrapper(UserDto)
 @dataWrapper('user')
+@UseGuards(JwtAuthGuard)
 export class UsersController {
 
     constructor(
         private usersService: UsersService
     ) {}
 
-    @UseGuards(JwtAuthGuard)
     @Get()
     async getCurrentUser(@Request() req): Promise<TokenizedUser> {
-        return await this.usersService.findUser({id: req.user.id})
+        return await this.usersService.getUserWithToken({id: req.user.id})
     }
 
-    @UseGuards(JwtAuthGuard)
     @Put()
     async updateUser(@Request() req, @Body('user') body: UpdateUserDto): Promise<TokenizedUser> {
         return await this.usersService.update(req.user.id, body)

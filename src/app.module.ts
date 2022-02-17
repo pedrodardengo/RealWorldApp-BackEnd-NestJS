@@ -3,7 +3,8 @@ import {UsersModule} from './users/users.module';
 import {AuthModule} from './auth/auth.module';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {User} from "./users/entities/user.entity";
-import {Follower} from "./users/entities/follower.entity";
+import {FollowRelation} from "./users/entities/follow-relation.entity";
+import { ArticlesModule } from './articles/articles.module';
 
 @Module({
     imports: [
@@ -15,10 +16,11 @@ import {Follower} from "./users/entities/follower.entity";
                 database: 'db.realWorldApp',
                 entities: [
                     User,
-                    Follower
+                    FollowRelation
                 ],
                 synchronize: true
             }),
+        ArticlesModule,
     ],
 })
 export class AppModule {

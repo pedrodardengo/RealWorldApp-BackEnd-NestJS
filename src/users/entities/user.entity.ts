@@ -1,5 +1,6 @@
-import {Entity, Column, PrimaryGeneratedColumn} from "typeorm";
+import {Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable} from "typeorm";
 import {Optional} from "@nestjs/common";
+import {FollowRelation} from "./follow-relation.entity";
 
 
 @Entity()
@@ -8,10 +9,10 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
+    @Column({ unique: true })
     username: string
 
-    @Column()
+    @Column({ unique: true })
     email: string
 
     @Column()
@@ -25,7 +26,8 @@ export class User {
     @Optional()
     imageUrl?: string
 
-    // @OneToMany(() => Follower, (follower) => follower.userId)
-    // followers: Follower[]
+    @OneToMany(() => FollowRelation, follower => follower.user)
+    @JoinTable()
+    followers: FollowRelation[];
 
 }

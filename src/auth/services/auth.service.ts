@@ -15,8 +15,7 @@ export class AuthService {
         private usersService: UsersService,
         private hashHandler: HashService,
         private tokenService: TokenService
-    ) {
-    }
+    ) {}
 
     async login(loginData: LoginDto): Promise<TokenizedUser> {
         let user = await this.authenticateUser(loginData.email, loginData.password)
@@ -24,7 +23,7 @@ export class AuthService {
     }
 
     private async authenticateUser(email: string, password: string): Promise<Partial<User>> {
-        const user = await this.usersService.findUser({email}, false)
+        const user = await this.usersService.getUserWithToken({email}, false)
         if (!user) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED)
         const doesPasswordMatch = await this.hashHandler.comparePasswordToHash(password, user.password)
         if (!doesPasswordMatch) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED)
