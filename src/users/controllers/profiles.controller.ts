@@ -3,7 +3,7 @@ import {JwtAuthGuard} from "../../auth/guards/jwt-auth.guard";
 import {dataWrapper} from "../../interceptors/data-wrapper.interceptor";
 import {securityWrapper} from "../../interceptors/security.interceptor";
 import {ProfileDto} from "../dto/profile.dto";
-import {ProfileService} from "../services/profile.service";
+import {ProfilesService} from "../services/profiles.service";
 
 @Controller('/profiles')
 @securityWrapper(ProfileDto)
@@ -12,7 +12,7 @@ import {ProfileService} from "../services/profile.service";
 export class ProfilesController {
 
     constructor(
-        private profileService: ProfileService
+        private profileService: ProfilesService
     ) {}
 
     @Get('/:username')

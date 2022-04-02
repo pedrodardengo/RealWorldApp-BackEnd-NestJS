@@ -5,6 +5,9 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import {User} from "./users/entities/user.entity";
 import {FollowRelation} from "./users/entities/follow-relation.entity";
 import { ArticlesModule } from './articles/articles.module';
+import {Article} from "./articles/entities/article.entity";
+import {Comment} from "./articles/entities/comment.entity";
+import {Tag} from "./articles/entities/tag.entity";
 
 @Module({
     imports: [
@@ -16,7 +19,10 @@ import { ArticlesModule } from './articles/articles.module';
                 database: 'db.realWorldApp',
                 entities: [
                     User,
-                    FollowRelation
+                    FollowRelation,
+                    Article,
+                    Comment,
+                    Tag
                 ],
                 synchronize: true
             }),

@@ -2,10 +2,10 @@ import {Injectable, UnauthorizedException} from '@nestjs/common';
 import {UsersService} from "../../users/services/users.service";
 import {User} from "../../users/entities/user.entity";
 import {LoginDto} from "../dto/login.dto";
-import {HashService} from "./hash.service";
 import {TokenService} from "./token.service";
 import {TokenizedUser} from "../../users/types/users.types";
-import {AUTH_MESSAGES} from "../exceptions/messages.exceptions";
+import {comparePasswordToHash} from "../security/hash-password";
+import {AUTH_MESSAGES} from "../../exceptions/messages.exceptions";
 
 
 @Injectable()
@@ -13,7 +13,6 @@ export class AuthService {
 
     constructor(
         private usersService: UsersService,
-        private hashHandler: HashService,
         private tokenService: TokenService
     ) {}
 
@@ -23,10 +22,10 @@ export class AuthService {
     }
 
     private async authenticateUser(email: string, password: string): Promise<Partial<User>> {
-        const user = await this.usersService.getUserWithToken({email}, false)
-        if (!user) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED)
-        const doesPasswordMatch = await this.hashHandler.comparePasswordToHash(password, user.password)
-        if (!doesPasswordMatch) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED)
+        const user = await this.usersService.getUserWithToken({email})
+        if (!user) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED_CREDENTIALS)
+        const doesPasswordMatch = await comparePasswordToHash(password, user.password)
+        if (!doesPasswordMatch) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED_CREDENTIALS)
         return user
     }
 }

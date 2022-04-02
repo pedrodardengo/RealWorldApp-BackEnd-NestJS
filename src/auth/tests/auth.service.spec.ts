@@ -2,7 +2,7 @@ import {Test} from '@nestjs/testing';
 import {AuthService} from '../services/auth.service';
 import {createMock, DeepMocked} from "@golevelup/ts-jest";
 import {UsersService} from "../../users/services/users.service";
-import {HashService} from "../services/hash.service";
+import {HashService} from "../security/hash-password";
 import {TokenService} from "../services/token.service";
 import {AUTH_MESSAGES} from "../exceptions/messages.exceptions";
 import {UsersExampleBuilder} from "../../../test/example_fatcories/users.example-builder";

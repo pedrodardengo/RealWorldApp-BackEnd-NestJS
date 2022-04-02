@@ -2,7 +2,7 @@ import {Entity, ManyToOne, PrimaryColumn,} from "typeorm";
 import {User} from "./user.entity";
 
 
-@Entity()
+@Entity({name: 'FollowRelation'})
 export class FollowRelation {
 
     @PrimaryColumn({type: 'int', name: 'userId'})
@@ -17,8 +17,4 @@ export class FollowRelation {
     })
     follower: User
 
-    constructor(targetUser: User, follower: User) {
-        this.user = targetUser
-        this.follower = follower
-    }
 }

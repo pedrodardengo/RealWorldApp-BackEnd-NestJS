@@ -5,9 +5,6 @@ import {PassportModule} from "@nestjs/passport";
 import {JwtModule} from "@nestjs/jwt";
 import {AuthController} from "./controllers/auth.controller";
 import {JwtStrategy} from "./security/jwt.strategy";
-import {HashService} from "./services/hash.service";
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {User} from "../users/entities/user.entity";
 import {TokenService} from "./services/token.service";
 
 @Module({
@@ -17,17 +14,14 @@ import {TokenService} from "./services/token.service";
         JwtModule.register({
             secret: 'aSecretKey',
             signOptions: {expiresIn: '2h'},
-        }),
-        TypeOrmModule.forFeature([User])
+        })
     ],
     providers: [
         AuthService,
         JwtStrategy,
-        HashService,
         TokenService
     ],
     exports: [
-        HashService,
         TokenService
     ],
     controllers: [AuthController]
