@@ -1,6 +1,6 @@
 export function createSlug(title: string): string {
-  const from = "ãàáäâẽèéëêìíïîõòóöôùúüûñç·/_,:;";
-  const to = "aaaaaeeeeeiiiiooooouuuunc------";
+  const from = "ãàáäâẽèéëêìíïîõòóöôùúüûñç·/_,:;"
+  const to = "aaaaaeeeeeiiiiooooouuuunc------"
 
   return title
     .split("")
@@ -13,5 +13,5 @@ export function createSlug(title: string): string {
     .replace(/\s+/g, "-") // Replace spaces with -
     .replace(/&/g, "-y-") // Replace & with 'and'
     .replace(/[^\w-]+/g, "") // Remove all non-word chars
-    .replace(/--+/g, "-"); // Replace multiple - with single -
+    .replace(/--+/g, "-") // Replace multiple - with single -
 }

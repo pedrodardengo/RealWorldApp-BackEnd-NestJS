@@ -1,18 +1,18 @@
-import { Expose } from "class-transformer";
-import { User } from "../entities/user.entity";
+import { Expose } from "class-transformer"
+import { User } from "../entities/user.entity"
 
 export class ProfileDto {
   @Expose()
-  username: string;
+  username: string
 
   @Expose()
-  following: boolean;
+  following: boolean
 
   @Expose()
-  bio?: string;
+  bio?: string
 
   @Expose()
-  imageUrl?: string;
+  imageUrl?: string
 
   build(
     username: string,
@@ -20,18 +20,18 @@ export class ProfileDto {
     bio?: string,
     imageUrl?: string
   ): ProfileDto {
-    this.username = username;
-    this.following = Boolean(following);
-    this.bio = bio;
-    this.imageUrl = imageUrl;
-    return this;
+    this.username = username
+    this.following = Boolean(following)
+    this.bio = bio
+    this.imageUrl = imageUrl
+    return this
   }
 
   mapFromUser(user: User, following: boolean): ProfileDto {
-    this.username = user.username;
-    this.following = following;
-    if (user.bio) this.bio = user.bio;
-    if (user.imageUrl) this.imageUrl = user.imageUrl;
-    return this;
+    this.username = user.username
+    this.following = following
+    if (user.bio) this.bio = user.bio
+    if (user.imageUrl) this.imageUrl = user.imageUrl
+    return this
   }
 }

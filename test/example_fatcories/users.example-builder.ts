@@ -1,12 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import * as faker from "faker";
+import { Injectable } from "@nestjs/common"
+import * as faker from "faker"
 
 @Injectable()
 export class UsersExampleBuilder {
-  user: any;
-  login: any;
-  tokenizedUser: any;
-  private readonly token: string;
+  user: any
+  login: any
+  tokenizedUser: any
+  private readonly token: string
 
   constructor() {
     this.user = {
@@ -15,11 +15,11 @@ export class UsersExampleBuilder {
       email: faker.internet.email(),
       password: faker.internet.password(),
       bio: faker.lorem.paragraph(1),
-      imageUrl: faker.internet.url(),
-    };
-    this.loginExample();
-    this.tokenizedUserExample();
-    this.token = faker.datatype.string(10);
+      imageUrl: faker.internet.url()
+    }
+    this.loginExample()
+    this.tokenizedUserExample()
+    this.token = faker.datatype.string(10)
   }
 
   // private updateRelated() {
@@ -30,12 +30,12 @@ export class UsersExampleBuilder {
   private loginExample(): void {
     this.login = {
       email: this.user.email,
-      password: this.user.password,
-    };
+      password: this.user.password
+    }
   }
 
   private tokenizedUserExample(): void {
-    this.tokenizedUser = Object.assign({ token: this.token }, this.user);
+    this.tokenizedUser = Object.assign({ token: this.token }, this.user)
   }
 
   // numberLessPassword() {

@@ -5,15 +5,15 @@ import {
   IsUrl,
   Matches,
   MaxLength,
-  MinLength,
-} from "class-validator";
+  MinLength
+} from "class-validator"
 
 export class CreateUserDto {
   @IsString()
-  username: string;
+  username: string
 
   @IsEmail()
-  email: string;
+  email: string
 
   @IsString()
   @MinLength(8, { message: "requires at least 8 characters" })
@@ -22,13 +22,13 @@ export class CreateUserDto {
   @Matches("[a-z]", "", { message: "requires lower-case characters" })
   @Matches("\\d", "", { message: "requires numbers" })
   @Matches("\\W", "", { message: "requires non alpha numeric characters" })
-  password: string;
+  password: string
 
   @IsOptional()
   @IsString()
-  bio?: string;
+  bio?: string
 
   @IsOptional()
   @IsUrl()
-  imageUrl?: string;
+  imageUrl?: string
 }

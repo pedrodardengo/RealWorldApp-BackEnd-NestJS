@@ -9,50 +9,50 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../users/entities/user.entity";
-import { Tag } from "./tag.entity";
-import { Comment } from "./comment.entity";
-import { createSlug } from "../helper/create-slug.helper";
+  UpdateDateColumn
+} from "typeorm"
+import { User } from "../../users/entities/user.entity"
+import { Tag } from "./tag.entity"
+import { Comment } from "./comment.entity"
+import { createSlug } from "../helper/create-slug.helper"
 
 @Entity({ name: "Article" })
 export class Article {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column({ unique: true })
-  slug: string;
+  slug: string
 
   @Column({ unique: true })
-  title: string;
+  title: string
 
   @Column({ type: "text" })
-  description: string;
+  description: string
 
   @Column({ type: "text" })
-  body: string;
+  body: string
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: Date
 
   @ManyToMany(() => Tag, (tag) => tag.articles)
   @JoinTable({ name: "ArticleTagRelation" })
-  tagList: Tag[];
+  tagList: Tag[]
 
   @ManyToMany(() => User, (user) => user.favoriteArticles)
   @JoinTable({ name: "FavoritedArticleRelation" })
-  favoritedBy: User[];
+  favoritedBy: User[]
 
   @ManyToOne(() => User, (user) => user.articles)
   @JoinTable({ name: "ArticleTagRelation" })
-  author: User;
+  author: User
 
   @OneToMany(() => Comment, (comment) => comment.article)
-  comments: Comment[];
+  comments: Comment[]
 
   constructor(
     title: string,
@@ -61,17 +61,17 @@ export class Article {
     author: User,
     tagList: Tag[]
   ) {
-    this.title = title;
-    this.description = description;
-    this.body = body;
-    this.author = author;
-    this.tagList = tagList;
+    this.title = title
+    this.description = description
+    this.body = body
+    this.author = author
+    this.tagList = tagList
   }
 
   @BeforeInsert()
   @BeforeUpdate()
   createSlug(): string {
-    this.slug = createSlug(this.title);
-    return this.slug;
+    this.slug = createSlug(this.title)
+    return this.slug
   }
 }

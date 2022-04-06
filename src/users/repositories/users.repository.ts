@@ -1,14 +1,14 @@
-import { EntityRepository, Repository } from "typeorm";
-import { User } from "../entities/user.entity";
-import { CreateUserDto } from "../dto/create-user.dto";
-import { UpdateUserDto } from "../dto/update-user.dto";
-import { FollowRelation } from "../entities/follow-relation.entity";
+import { EntityRepository, Repository } from "typeorm"
+import { User } from "../entities/user.entity"
+import { CreateUserDto } from "../dto/create-user.dto"
+import { UpdateUserDto } from "../dto/update-user.dto"
+import { FollowRelation } from "../entities/follow-relation.entity"
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
   async createAndSave(incomingUser: CreateUserDto): Promise<User> {
-    const user = new User().build(incomingUser);
-    return await this.manager.save(user);
+    const user = new User().build(incomingUser)
+    return await this.manager.save(user)
   }
 
   async updateUserReturningIt(
@@ -17,7 +17,7 @@ export class UsersRepository extends Repository<User> {
   ): Promise<User> {
     return await this.manager
       .getRepository(User)
-      .save({ id, ...updateUserData });
+      .save({ id, ...updateUserData })
   }
 
   async findAUserByEmailOrUsername(
@@ -25,14 +25,14 @@ export class UsersRepository extends Repository<User> {
     username: string
   ): Promise<User> {
     return await this.manager.findOne(User, {
-      where: [{ username }, { email }],
-    });
+      where: [{ username }, { email }]
+    })
   }
 
   async doesUserFollowProfile(user: number, follower: number) {
     return Boolean(
       await this.manager.findOne(FollowRelation, { where: { user, follower } })
-    );
+    )
   }
 
   async followUser(userId: number, profileUserId: number): Promise<void> {
@@ -41,7 +41,7 @@ export class UsersRepository extends Repository<User> {
       .insert()
       .into("FollowRelation")
       .values({ user: userId, follower: profileUserId })
-      .execute();
+      .execute()
   }
 
   async unfollowUser(userId: number, followerId: number): Promise<void> {
@@ -51,8 +51,8 @@ export class UsersRepository extends Repository<User> {
       .from(FollowRelation)
       .where("userId = :userId AND followerId = :followerId", {
         userId,
-        followerId,
+        followerId
       })
-      .execute();
+      .execute()
   }
 }

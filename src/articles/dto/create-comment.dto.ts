@@ -1,3 +1,3 @@
 export class CreateCommentDto {
-  body: string;
+  body: string
 }

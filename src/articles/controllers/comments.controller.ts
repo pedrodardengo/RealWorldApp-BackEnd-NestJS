@@ -5,14 +5,14 @@ import {
   Get,
   Param,
   Post,
-  UseGuards,
-} from "@nestjs/common";
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor";
-import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
-import { CreateCommentDto } from "../dto/create-comment.dto";
-import { CommentsService } from "../services/comments.service";
-import { ExposedCommentDto } from "../dto/exposed-comment.dto";
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe";
+  UseGuards
+} from "@nestjs/common"
+import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
+import { CreateCommentDto } from "../dto/create-comment.dto"
+import { CommentsService } from "../services/comments.service"
+import { ExposedCommentDto } from "../dto/exposed-comment.dto"
+import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
 
 @Controller("/articles")
 @UseGuards(JwtAuthGuard)
@@ -26,7 +26,7 @@ export class CommentsController {
     @Param("slug") slug: string,
     @Body("comment") comment: CreateCommentDto
   ): Promise<ExposedCommentDto> {
-    return await this.commentsService.createComment(id, slug, comment.body);
+    return await this.commentsService.createComment(id, slug, comment.body)
   }
 
   @dataWrapper("comments")
@@ -35,7 +35,7 @@ export class CommentsController {
     @RequestingUserIdPipe() id: number,
     @Param("slug") slug: string
   ): Promise<ExposedCommentDto[]> {
-    return this.commentsService.getCommentsFromArticle(id, slug);
+    return this.commentsService.getCommentsFromArticle(id, slug)
   }
 
   @dataWrapper("comment")
@@ -44,6 +44,6 @@ export class CommentsController {
     @RequestingUserIdPipe() requestingUserId: number,
     @Param("id") id: number
   ): Promise<void> {
-    return this.commentsService.deleteComment(requestingUserId, id);
+    return this.commentsService.deleteComment(requestingUserId, id)
   }
 }

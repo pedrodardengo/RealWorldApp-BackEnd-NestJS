@@ -2,13 +2,13 @@ import {
   CallHandler,
   ExecutionContext,
   NestInterceptor,
-  UseInterceptors,
-} from "@nestjs/common";
-import { map, Observable } from "rxjs";
-import { plainToInstance } from "class-transformer";
+  UseInterceptors
+} from "@nestjs/common"
+import { map, Observable } from "rxjs"
+import { plainToInstance } from "class-transformer"
 
 interface ClassConstructor {
-  new (...args: unknown[]): unknown;
+  new (...args: unknown[]): unknown
 }
 
 export function securityWrapper(dto: ClassConstructor) {
@@ -17,7 +17,7 @@ export function securityWrapper(dto: ClassConstructor) {
    *DTO attributes from the incoming data. For example, if an endpoint should return User data, this can be used
    * to remove password and other sensitive information.
    */
-  return UseInterceptors(new SecurityInterceptor(dto));
+  return UseInterceptors(new SecurityInterceptor(dto))
 }
 
 export class SecurityInterceptor implements NestInterceptor {
@@ -30,9 +30,9 @@ export class SecurityInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((data: unknown) => {
         return plainToInstance(this.dto, data, {
-          excludeExtraneousValues: true,
-        });
+          excludeExtraneousValues: true
+        })
       })
-    );
+    )
   }
 }

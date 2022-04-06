@@ -2,16 +2,16 @@ import {
   CallHandler,
   ExecutionContext,
   NestInterceptor,
-  UseInterceptors,
-} from "@nestjs/common";
-import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
+  UseInterceptors
+} from "@nestjs/common"
+import { map } from "rxjs/operators"
+import { Observable } from "rxjs"
 
 export function dataWrapper(dataKey: string) {
   /**
    * This is used to pass the intercept this app responses in order to add a wrapper key around the response data.
    */
-  return UseInterceptors(new DataWrapperInterceptor(dataKey));
+  return UseInterceptors(new DataWrapperInterceptor(dataKey))
 }
 
 export class DataWrapperInterceptor implements NestInterceptor {
@@ -23,6 +23,6 @@ export class DataWrapperInterceptor implements NestInterceptor {
   ): Observable<object> {
     return next
       .handle()
-      .pipe(map((data: unknown) => ({ [this.dataKey]: data })));
+      .pipe(map((data: unknown) => ({ [this.dataKey]: data })))
   }
 }

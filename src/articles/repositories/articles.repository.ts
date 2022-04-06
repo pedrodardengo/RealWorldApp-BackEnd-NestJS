@@ -1,13 +1,13 @@
-import { EntityRepository, Repository, SelectQueryBuilder } from "typeorm";
-import { Article } from "../entities/article.entity";
-import { CreateArticleDto } from "../dto/create-article.dto";
-import { User } from "../../users/entities/user.entity";
-import { Tag } from "../entities/tag.entity";
-import { ArticlesQuery } from "../types/articles.query";
-import { FollowRelation } from "../../users/entities/follow-relation.entity";
-import { isString } from "class-validator";
-import { MixedArticleData } from "../dto/exposed-article.dto";
-import { FeedArticlesQuery } from "../types/feed-articles.query";
+import { EntityRepository, Repository, SelectQueryBuilder } from "typeorm"
+import { Article } from "../entities/article.entity"
+import { CreateArticleDto } from "../dto/create-article.dto"
+import { User } from "../../users/entities/user.entity"
+import { Tag } from "../entities/tag.entity"
+import { ArticlesQuery } from "../types/articles.query"
+import { FollowRelation } from "../../users/entities/follow-relation.entity"
+import { isString } from "class-validator"
+import { MixedArticleData } from "../dto/exposed-article.dto"
+import { FeedArticlesQuery } from "../types/feed-articles.query"
 
 @EntityRepository(Article)
 export class ArticlesRepository extends Repository<Article> {
@@ -22,8 +22,8 @@ export class ArticlesRepository extends Repository<Article> {
       articleDto.body,
       author,
       TagList
-    );
-    return await this.manager.save(Article, article);
+    )
+    return await this.manager.save(Article, article)
   }
 
   async getArticle(requestingUserId: number, slug: string) {
@@ -34,7 +34,7 @@ export class ArticlesRepository extends Repository<Article> {
       .findIfArticleIsFavoritedByRequestingUser(requestingUserId)
       .addTagListOfTheArticles()
       .addFavoritesCount()
-      .getArticleBySlug(slug);
+      .getArticleBySlug(slug)
   }
 
   async getMostRecentArticles(
@@ -51,7 +51,7 @@ export class ArticlesRepository extends Repository<Article> {
       .findIfArticleIsFavoritedByRequestingUser(requestingUserId)
       .addTagListOfTheArticles()
       .addFavoritesCount()
-      .getResults(articlesQuery.offset, articlesQuery.limit);
+      .getResults(articlesQuery.offset, articlesQuery.limit)
   }
 
   async getMostRecentArticlesFromWhomUserFollows(
@@ -67,11 +67,11 @@ export class ArticlesRepository extends Repository<Article> {
       .findIfArticleIsFavoritedByRequestingUser(requestingUserId)
       .addTagListOfTheArticles()
       .addFavoritesCount()
-      .getResults(feedArticleQuery.offset, feedArticleQuery.limit);
+      .getResults(feedArticleQuery.offset, feedArticleQuery.limit)
     return listMixedArticleData.map((mixedData) => {
-      mixedData.following = true;
-      return mixedData;
-    });
+      mixedData.following = true
+      return mixedData
+    })
   }
 
   async favoriteArticle(userId: number, articleId: number): Promise<void> {
@@ -81,23 +81,23 @@ export class ArticlesRepository extends Repository<Article> {
       .into("FavoritedArticleRelation")
       .values([{ articleId, userId }])
       .orIgnore(`("id") DO NOTHING`)
-      .execute();
+      .execute()
   }
 
   async unfavoriteArticle(userId: number, articleId: number) {
     await this.manager
       .getRepository("FavoritedArticleRelation")
-      .delete({ articleId, userId });
+      .delete({ articleId, userId })
   }
 }
 
 class SelectArticleQueryBuilder {
-  private queryBuilder: SelectQueryBuilder<Article>;
+  private queryBuilder: SelectQueryBuilder<Article>
 
   constructor(queryBuilder) {
     this.queryBuilder = queryBuilder
       .createQueryBuilder()
-      .from(Article, "Article");
+      .from(Article, "Article")
   }
 
   selectMainFields(): SelectArticleQueryBuilder {
@@ -110,34 +110,34 @@ class SelectArticleQueryBuilder {
       '"createdAt"',
       "username",
       "bio",
-      '"imageUrl"',
-    ]);
-    return this;
+      '"imageUrl"'
+    ])
+    return this
   }
 
   joinWithAuthor(): SelectArticleQueryBuilder {
-    this.queryBuilder.innerJoin(User, "Author", "Author.id = Article.authorId");
-    return this;
+    this.queryBuilder.innerJoin(User, "Author", "Author.id = Article.authorId")
+    return this
   }
 
   filterByListOfTags(tagList?: string | string[]): SelectArticleQueryBuilder {
-    if (isString(tagList)) tagList = [tagList];
+    if (isString(tagList)) tagList = [tagList]
     if (tagList) {
       this.queryBuilder
         .innerJoin("ArticleTagRelation", "ATR", "Article.id = ATR.articleId")
         .innerJoin(Tag, "T", "ATR.tagId = T.id")
-        .where("T.name = ANY (:tags)", { tags: tagList });
+        .where("T.name = ANY (:tags)", { tags: tagList })
     }
-    return this;
+    return this
   }
 
   filterByAuthor(authorUsername?: string): SelectArticleQueryBuilder {
     if (authorUsername) {
       this.queryBuilder.where("Author.username = :authorUsername", {
-        authorUsername,
-      });
+        authorUsername
+      })
     }
-    return this;
+    return this
   }
 
   filterByAuthorsThatUserFollows(
@@ -145,8 +145,8 @@ class SelectArticleQueryBuilder {
   ): SelectArticleQueryBuilder {
     this.queryBuilder
       .innerJoin(FollowRelation, "FR1", "FR1.userId = Article.authorId")
-      .andWhere("FR1.followerId = :requestingUserId", { requestingUserId });
-    return this;
+      .andWhere("FR1.followerId = :requestingUserId", { requestingUserId })
+    return this
   }
 
   filterByFavoritedByUser(username?: string): SelectArticleQueryBuilder {
@@ -158,9 +158,9 @@ class SelectArticleQueryBuilder {
           "FAR.articleId = Article.id"
         )
         .innerJoin(User, "UserF", "UserF.id = FAR.userId")
-        .where("UserF.username = :usernameF", { usernameF: username });
+        .where("UserF.username = :usernameF", { usernameF: username })
     }
-    return this;
+    return this
   }
 
   findIfRequestingUserFollowsArticleAuthor(
@@ -174,13 +174,13 @@ class SelectArticleQueryBuilder {
               .from(FollowRelation, "FR")
               .innerJoin(User, "U", "U.id = FR.followerId")
               .where("FR.userId = Author.id AND U.id = :requestingUserId", {
-                requestingUserId,
+                requestingUserId
               })
           )
         ),
       "following"
-    );
-    return this;
+    )
+    return this
   }
 
   findIfArticleIsFavoritedByRequestingUser(
@@ -200,8 +200,8 @@ class SelectArticleQueryBuilder {
           )
         ),
       "favorited"
-    );
-    return this;
+    )
+    return this
   }
 
   addTagListOfTheArticles(): SelectArticleQueryBuilder {
@@ -213,8 +213,8 @@ class SelectArticleQueryBuilder {
           .innerJoin("ArticleTagRelation", "ATR2", "ATR2.tagId = T2.id")
           .where("Article.id = ATR2.articleId"),
       "tagList"
-    );
-    return this;
+    )
+    return this
   }
 
   addFavoritesCount(): SelectArticleQueryBuilder {
@@ -225,8 +225,8 @@ class SelectArticleQueryBuilder {
           .from("FavoritedArticleRelation", "FAR")
           .where("FAR.articleId = Article.id"),
       "favoritesCount"
-    );
-    return this;
+    )
+    return this
   }
 
   async getResults(offset: number, limit: number): Promise<MixedArticleData[]> {
@@ -240,15 +240,15 @@ class SelectArticleQueryBuilder {
       .orderBy("Article.createdAt", "DESC")
       .offset(offset)
       .limit(limit)
-      .getRawMany();
+      .getRawMany()
   }
 
   async getArticleBySlug(slug: string): Promise<MixedArticleData> {
     return await this.queryBuilder
       .where("Article.slug = :slug", { slug })
-      .getRawOne();
+      .getRawOne()
   }
 
   private existsQuery = <T>(builder: SelectQueryBuilder<T>) =>
-    `EXISTS (${builder.getQuery()})`;
+    `EXISTS (${builder.getQuery()})`
 }

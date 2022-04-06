@@ -1,17 +1,10 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from "@nestjs/common";
-import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor";
-import { securityWrapper } from "../../interceptors/security.interceptor";
-import { ProfileDto } from "../dto/profile.dto";
-import { ProfilesService } from "../services/profiles.service";
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe";
+import { Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common"
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
+import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
+import { securityWrapper } from "../../interceptors/security.interceptor"
+import { ProfileDto } from "../dto/profile.dto"
+import { ProfilesService } from "../services/profiles.service"
+import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
 
 @Controller("/profiles")
 @securityWrapper(ProfileDto)
@@ -25,7 +18,7 @@ export class ProfilesController {
     @RequestingUserIdPipe() id: number,
     @Param("username") username: string
   ): Promise<ProfileDto> {
-    return await this.profileService.getProfile(id, username);
+    return await this.profileService.getProfile(id, username)
   }
 
   @Post("/:username/follow")
@@ -33,7 +26,7 @@ export class ProfilesController {
     @RequestingUserIdPipe() id: number,
     @Param("username") username: string
   ): Promise<ProfileDto> {
-    return await this.profileService.followUser(id, username);
+    return await this.profileService.followUser(id, username)
   }
 
   @Delete("/:username/follow")
@@ -41,6 +34,6 @@ export class ProfilesController {
     @RequestingUserIdPipe() id: number,
     @Param("username") username: string
   ): Promise<ProfileDto> {
-    return await this.profileService.unfollowUser(id, username);
+    return await this.profileService.unfollowUser(id, username)
   }
 }

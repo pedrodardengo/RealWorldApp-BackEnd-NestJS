@@ -1,16 +1,16 @@
-import { IsString, MaxLength } from "class-validator";
+import { IsString, MaxLength } from "class-validator"
 
 export class CreateArticleDto {
   @IsString()
   @MaxLength(80)
-  title: string;
+  title: string
 
   @IsString()
   @MaxLength(500)
-  description: string;
+  description: string
 
   @IsString()
-  body: string;
+  body: string
 
-  tagList?: string[];
+  tagList?: string[]
 }

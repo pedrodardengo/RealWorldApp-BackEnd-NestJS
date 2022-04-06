@@ -7,18 +7,18 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
-} from "@nestjs/common";
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor";
-import { ArticlesService } from "../services/articles.service";
-import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
-import { CreateArticleDto } from "../dto/create-article.dto";
-import { ArticlesQuery } from "../types/articles.query";
-import { FeedArticlesQuery } from "../types/feed-articles.query";
-import { UpdateArticleDto } from "../dto/update-article.dto";
-import { ExposedArticleDto } from "../dto/exposed-article.dto";
-import { ListArticlesDto } from "../dto/list-articles.dto";
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe";
+  UseGuards
+} from "@nestjs/common"
+import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
+import { ArticlesService } from "../services/articles.service"
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
+import { CreateArticleDto } from "../dto/create-article.dto"
+import { ArticlesQuery } from "../types/articles.query"
+import { FeedArticlesQuery } from "../types/feed-articles.query"
+import { UpdateArticleDto } from "../dto/update-article.dto"
+import { ExposedArticleDto } from "../dto/exposed-article.dto"
+import { ListArticlesDto } from "../dto/list-articles.dto"
+import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
 
 @Controller("/articles")
 @UseGuards(JwtAuthGuard)
@@ -31,7 +31,7 @@ export class ArticlesController {
     @RequestingUserIdPipe() id: number,
     @Body("article") article: CreateArticleDto
   ): Promise<ExposedArticleDto> {
-    return this.articlesService.createArticle(id, article);
+    return this.articlesService.createArticle(id, article)
   }
 
   @Get("/feed")
@@ -39,7 +39,7 @@ export class ArticlesController {
     @RequestingUserIdPipe() id: number,
     @Query() query: FeedArticlesQuery
   ): Promise<ListArticlesDto> {
-    return this.articlesService.getFeedOfArticles(id, query);
+    return this.articlesService.getFeedOfArticles(id, query)
   }
 
   @dataWrapper("article")
@@ -48,7 +48,7 @@ export class ArticlesController {
     @RequestingUserIdPipe() id: number,
     @Param("slug") slug: string
   ): Promise<ExposedArticleDto> {
-    return await this.articlesService.getArticle(id, slug);
+    return await this.articlesService.getArticle(id, slug)
   }
 
   @Get()
@@ -56,7 +56,7 @@ export class ArticlesController {
     @RequestingUserIdPipe() id: number,
     @Query() query: ArticlesQuery
   ): Promise<ListArticlesDto> {
-    return await this.articlesService.getMostRecentArticles(id, query);
+    return await this.articlesService.getMostRecentArticles(id, query)
   }
 
   @dataWrapper("article")
@@ -66,7 +66,7 @@ export class ArticlesController {
     @Param("slug") slug: string,
     @Body("article") body: UpdateArticleDto
   ): Promise<ExposedArticleDto> {
-    return this.articlesService.updateArticle(id, slug, body);
+    return this.articlesService.updateArticle(id, slug, body)
   }
 
   @Delete("/:slug")
@@ -74,7 +74,7 @@ export class ArticlesController {
     @RequestingUserIdPipe() id: number,
     @Param("slug") slug: string
   ): Promise<void> {
-    return this.articlesService.deleteArticle(id, slug);
+    return this.articlesService.deleteArticle(id, slug)
   }
 
   @dataWrapper("article")
@@ -87,7 +87,7 @@ export class ArticlesController {
       true,
       id,
       slug
-    );
+    )
   }
 
   @dataWrapper("article")
@@ -100,6 +100,6 @@ export class ArticlesController {
       false,
       id,
       slug
-    );
+    )
   }
 }

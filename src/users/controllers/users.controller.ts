@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Put, UseGuards } from "@nestjs/common";
-import { UsersService } from "../services/users.service";
-import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
-import { UpdateUserDto } from "../dto/update-user.dto";
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor";
-import { TokenizedUser } from "../types/users.types";
-import { securityWrapper } from "../../interceptors/security.interceptor";
-import { UserDto } from "../dto/user.dto";
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe";
+import { Body, Controller, Get, Put, UseGuards } from "@nestjs/common"
+import { UsersService } from "../services/users.service"
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
+import { UpdateUserDto } from "../dto/update-user.dto"
+import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
+import { TokenizedUser } from "../types/users.types"
+import { securityWrapper } from "../../interceptors/security.interceptor"
+import { UserDto } from "../dto/user.dto"
+import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
 
 @Controller("/user")
 @securityWrapper(UserDto)
@@ -19,7 +19,7 @@ export class UsersController {
   async getCurrentUser(
     @RequestingUserIdPipe() id: number
   ): Promise<TokenizedUser> {
-    return await this.usersService.getUserWithToken({ id });
+    return await this.usersService.getUserWithToken({ id })
   }
 
   @Put()
@@ -27,6 +27,6 @@ export class UsersController {
     @RequestingUserIdPipe() id: number,
     @Body("user") body: UpdateUserDto
   ): Promise<TokenizedUser> {
-    return await this.usersService.update(id, body);
+    return await this.usersService.update(id, body)
   }
 }
