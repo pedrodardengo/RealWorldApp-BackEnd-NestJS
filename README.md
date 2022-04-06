@@ -22,3 +22,5 @@ the [RealWorld](https://github.com/gothinkster/realworld) repo.
 
 > npm install, npm start, etc.
 
+# Entity Relation Diagram
+![RealWorld Example App](docs/ERD.png)
