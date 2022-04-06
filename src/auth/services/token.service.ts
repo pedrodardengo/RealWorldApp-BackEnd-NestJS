@@ -9,7 +9,7 @@ export class TokenService {
 
     async addTokenToUser(user: Partial<User>): Promise<TokenizedUser> {
         const token = await this.jwtService.signAsync({sub: user.id})
-        return Object.assign({token}, user)
+        return {...user, token}
     }
 
 }

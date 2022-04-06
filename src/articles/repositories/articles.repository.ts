@@ -13,7 +13,7 @@ import {FeedArticlesQuery} from "../types/feed-articles.query";
 @EntityRepository(Article)
 export class ArticlesRepository extends Repository<Article> {
 
-    async createArticle(articleDto: CreateArticleDto, author: User, TagList: Tag[]): Promise<Article> {
+    async createAndSaveArticle(articleDto: CreateArticleDto, author: User, TagList: Tag[]): Promise<Article> {
         const article = new Article(articleDto.title, articleDto.description, articleDto.body, author, TagList)
         return await this.manager.save(Article, article)
     }
@@ -33,8 +33,9 @@ export class ArticlesRepository extends Repository<Article> {
         return await new SelectArticleQueryBuilder(this.manager)
             .selectMainFields()
             .filterByListOfTags(articlesQuery.tag)
+            .joinWithAuthor()
             .filterByAuthor(articlesQuery.author)
-            .filterByFavoritedByUser(articlesQuery.favorited)
+            .filterByFavoritedByUser(articlesQuery.favoritedBy)
             .findIfRequestingUserFollowsArticleAuthor(requestingUserId)
             .findIfArticleIsFavoritedByRequestingUser(requestingUserId)
             .addTagListOfTheArticles()
@@ -42,24 +43,31 @@ export class ArticlesRepository extends Repository<Article> {
             .getResults(articlesQuery.offset, articlesQuery.limit)
     }
 
-    async getFeedOfArticles(
+    async getMostRecentArticlesFromWhomUserFollows(
         requestingUserId: number,
         feedArticleQuery: FeedArticlesQuery
     ): Promise<MixedArticleData[]> {
-        return await new SelectArticleQueryBuilder(this.manager)
+        const listMixedArticleData = await new SelectArticleQueryBuilder(this.manager)
             .selectMainFields()
             .joinWithAuthor()
             .filterByAuthorsThatUserFollows(requestingUserId)
-            .findIfRequestingUserFollowsArticleAuthor(requestingUserId)
             .findIfArticleIsFavoritedByRequestingUser(requestingUserId)
             .addTagListOfTheArticles()
             .addFavoritesCount()
             .getResults(feedArticleQuery.offset, feedArticleQuery.limit)
+        return listMixedArticleData.map(mixedData => {
+            mixedData.following = true
+            return mixedData
+        })
     }
 
-    async favoriteArticle(userId: number, articleId: number) {
-        await this.manager.getRepository('FavoritedArticleRelation')
-            .save({articleId, userId})
+    async favoriteArticle(userId: number, articleId: number): Promise<void> {
+        await this.manager.createQueryBuilder()
+            .insert()
+            .into('FavoritedArticleRelation')
+            .values([{articleId, userId}])
+            .orIgnore(`("id") DO NOTHING`)
+            .execute()
     }
 
     async unfavoriteArticle(userId: number, articleId: number) {
@@ -81,8 +89,8 @@ class SelectArticleQueryBuilder {
         this.queryBuilder
             .select([
                 'slug', 'title', 'description',
-                'body', 'Article.updatedAt AS "updatedAt"', 'Article.createdAt AS "createdAt"',
-                'Author.username AS username', 'Author.bio AS bio', 'Author.imageUrl AS "imageUrl"'
+                'body', '"updatedAt"', '"createdAt"',
+                'username', 'bio', '"imageUrl"'
             ])
         return this
     }
@@ -105,7 +113,6 @@ class SelectArticleQueryBuilder {
 
     filterByAuthor(authorUsername?: string): SelectArticleQueryBuilder {
         if (authorUsername) {
-            this.joinWithAuthor()
             this.queryBuilder.where('Author.username = :authorUsername', {authorUsername})
         }
         return this
@@ -114,7 +121,7 @@ class SelectArticleQueryBuilder {
     filterByAuthorsThatUserFollows(requestingUserId: number): SelectArticleQueryBuilder {
         this.queryBuilder
             .innerJoin(FollowRelation, 'FR1', 'FR1.userId = Article.authorId')
-            .where('FR1.followerId = :requestingUserId', {requestingUserId})
+            .andWhere('FR1.followerId = :requestingUserId', {requestingUserId})
         return this
     }
 
@@ -136,8 +143,8 @@ class SelectArticleQueryBuilder {
                             .from(FollowRelation, 'FR')
                             .innerJoin(User, 'U', 'U.id = FR.followerId')
                             .where(
-                                'FR.userId = Author.id AND U.id = :id',
-                                {id: requestingUserId}
+                                'FR.userId = Author.id AND U.id = :requestingUserId',
+                                {requestingUserId}
                             )
                     )
                 ),
@@ -188,7 +195,7 @@ class SelectArticleQueryBuilder {
         return this
     }
 
-    async getResults(page: number, pageSize: number): Promise<MixedArticleData[]> {
+    async getResults(offset: number, limit: number): Promise<MixedArticleData[]> {
         return await this.queryBuilder
             .groupBy(
             'Article.title, Article.slug, Article.description, Article.body, ' +
@@ -197,8 +204,8 @@ class SelectArticleQueryBuilder {
             )
             .addGroupBy('Article.id, Author.id')
             .orderBy('Article.createdAt', 'DESC')
-            .take(pageSize)
-            .offset(page * pageSize)
+            .offset(offset)
+            .limit(limit)
             .getRawMany()
     }
 

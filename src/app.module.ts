@@ -8,24 +8,38 @@ import { ArticlesModule } from './articles/articles.module';
 import {Article} from "./articles/entities/article.entity";
 import {Comment} from "./articles/entities/comment.entity";
 import {Tag} from "./articles/entities/tag.entity";
+import {ConfigModule, ConfigService} from "@nestjs/config";
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+           isGlobal: true,
+           envFilePath: '.env'
+        }),
+        TypeOrmModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (config: ConfigService) => {
+                return {
+                    type: 'postgres',
+                    host: config.get('DB_HOST'),
+                    port: config.get('DB_PORT'),
+                    username: config.get('DB_USERNAME'),
+                    password: config.get('DB_PASSWORD'),
+                    database: config.get('DB_USERNAME'),
+                    entities: [
+                        User,
+                        FollowRelation,
+                        Article,
+                        Comment,
+                        Tag
+                    ],
+                    synchronize: true
+                }
+            }
+        }),
+
         UsersModule,
         AuthModule,
-        TypeOrmModule.forRoot(
-            {
-                type: 'sqlite',
-                database: 'db.realWorldApp',
-                entities: [
-                    User,
-                    FollowRelation,
-                    Article,
-                    Comment,
-                    Tag
-                ],
-                synchronize: true
-            }),
         ArticlesModule,
     ],
 })

@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from '@nestjs/common';
+import {ConflictException, Injectable} from '@nestjs/common';
 import {CreateUserDto} from "../dto/create-user.dto";
 import {UpdateUserDto} from "../dto/update-user.dto";
 import {TokenService} from "../../auth/services/token.service";
@@ -35,13 +35,9 @@ export class UsersService {
     private async throwIfUserExists(user: CreateUserDto): Promise<void> {
         const dataFound = await this.usersRepo.findAUserByEmailOrUsername(user.email, user.username)
         if (dataFound === undefined) return
-        if (dataFound.email === user.email) throw new BadRequestException(USER_MESSAGES.EMAIL_ALREADY_EXISTS)
-        if (dataFound.username === user.username) throw new BadRequestException(USER_MESSAGES.USERNAME_ALREADY_EXISTS)
+        if (dataFound.email === user.email)
+            throw new ConflictException(USER_MESSAGES.EMAIL_ALREADY_EXISTS(user.email))
+        if (dataFound.username === user.username)
+            throw new ConflictException(USER_MESSAGES.USERNAME_ALREADY_EXISTS(user.username))
     }
-
-    // async remove(username: string): Promise<User> {
-    //     const user = await this.findByUsername(username)
-    //     if (!user) throw new Error('MESSAGES.USER_NOT_FOUND')
-    //     return await this.repo.remove(user)
-    // }
 }

@@ -26,10 +26,10 @@ export class Article {
     @Column({unique: true})
     title: string
 
-    @Column()
+    @Column({type: "text"})
     description: string
 
-    @Column()
+    @Column({type: "text"})
     body: string
 
     @CreateDateColumn()
@@ -55,8 +55,9 @@ export class Article {
 
     @BeforeInsert()
     @BeforeUpdate()
-    createSlug() {
+    createSlug(): string {
         this.slug = createSlug(this.title)
+        return this.slug
     }
 
     constructor(title: string, description: string, body: string, author: User, tagList: Tag[]) {

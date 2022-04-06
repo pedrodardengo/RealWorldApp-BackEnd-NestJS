@@ -1,4 +1,4 @@
-import {Injectable, UnauthorizedException} from "@nestjs/common";
+import {Injectable, NotFoundException, UnauthorizedException} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository, SelectQueryBuilder} from "typeorm";
 import {Comment} from "../entities/comment.entity";
@@ -9,7 +9,7 @@ import {ProfileDto} from "../../users/dto/profile.dto";
 import {Article} from "../entities/article.entity";
 import {User} from "../../users/entities/user.entity";
 import {FollowRelation} from "../../users/entities/follow-relation.entity";
-import {AUTH_MESSAGES} from "../../exceptions/messages.exceptions";
+import {ARTICLE_MESSAGES, AUTH_MESSAGES} from "../../exceptions/messages.exceptions";
 
 
 @Injectable()
@@ -25,25 +25,28 @@ export class CommentsService {
         const author = await this.usersRepo.findOne(authorId)
         const profile = new ProfileDto().mapFromUser(author, false)
         const article = await this.articlesRepo.findOne({where: {slug}})
+        if (!article) throw new NotFoundException(ARTICLE_MESSAGES.ARTICLE_NOT_FOUND(slug))
         let comment = this.commentsRepo.create({body, author, article})
         comment = await this.commentsRepo.save(comment)
         return new ExposedCommentDto().mapFromCommentAndProfile(profile, comment)
     }
 
     async deleteComment(requestingUserId: number, commentId: number): Promise<void> {
-        const comment = await this.commentsRepo.findOne(commentId)
+        const comment = await this.commentsRepo.findOne(commentId, {relations: ['author']})
         if (comment.author.id != requestingUserId) throw new UnauthorizedException(AUTH_MESSAGES.NOT_THE_AUTHOR)
         await this.commentsRepo.delete(commentId)
     }
 
     async getCommentsFromArticle(requestingUserId: number, slug: string) {
+        const article = await this.articlesRepo.findOne({where: {slug}})
+        if (!article) throw new NotFoundException(ARTICLE_MESSAGES.ARTICLE_NOT_FOUND(slug))
         const existsQuery = <T>(builder: SelectQueryBuilder<T>) => `EXISTS (${builder.getQuery()})`;
         const listMixedCommentData = await this.commentsRepo.manager.createQueryBuilder()
             .from(Comment, 'Comment')
             .select(
                 [
-                    'Comment.createdAt AS createdAt', 'Comment.updatedAt AS updatedAt', 'Comment.body AS body',
-                    'Author.username as username', 'Author.bio AS bio', 'Author.imageUrl AS imageUrl',
+                    'Comment.createdAt AS "createdAt"', 'Comment.updatedAt AS "updatedAt"', 'Comment.body AS "body"',
+                    'Author.username as username', 'Author.bio AS "bio"', 'Author.imageUrl AS "imageUrl"',
                     'Comment.id AS id'
                 ]
             )

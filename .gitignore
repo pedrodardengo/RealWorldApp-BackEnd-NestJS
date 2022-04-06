@@ -37,3 +37,5 @@ lerna-debug.log*
 # SQLite DB files
 db.*
 identifier.sqlite
+
+.env

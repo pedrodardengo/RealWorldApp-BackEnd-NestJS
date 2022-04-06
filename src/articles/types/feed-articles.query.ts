@@ -10,6 +10,6 @@ export class FeedArticlesQuery {
 
     @Min(0)
     @IsInt()
-    offset?:number = 0
+    offset?: number = 0
 
 }

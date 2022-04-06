@@ -18,20 +18,20 @@ export class ProfilesService {
         if (isString(profileUserOrUsername)) {
             profileUserOrUsername = await this.usersRepo.findOne({username: profileUserOrUsername})
         }
-        const doesUserFollowProfile = await this.usersRepo.doesUserFollowProfile(id, profileUserOrUsername.id)
+        const doesUserFollowProfile = await this.usersRepo.doesUserFollowProfile(profileUserOrUsername.id, id)
         return new ProfileDto().mapFromUser(profileUserOrUsername, doesUserFollowProfile)
 
     }
 
     async followUser(userId: number, targetUsername: string): Promise<ProfileDto> {
         const targetUser = await this.usersRepo.findOne({username: targetUsername})
-        await this.usersRepo.followUser(userId, targetUser.id)
+        await this.usersRepo.followUser(targetUser.id, userId)
         return new ProfileDto().mapFromUser(targetUser, true)
     }
 
     async unfollowUser(id: number, targetUsername: string): Promise<ProfileDto> {
         const targetUser = await this.usersRepo.findOne({username: targetUsername})
-        await this.usersRepo.unfollowUser(id, targetUser.id)
+        await this.usersRepo.unfollowUser(targetUser.id, id)
         return new ProfileDto().mapFromUser(targetUser, false)
     }
 

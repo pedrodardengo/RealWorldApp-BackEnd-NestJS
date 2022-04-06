@@ -1,16 +1,19 @@
 import {FeedArticlesQuery} from "./feed-articles.query";
-import {IsString} from "class-validator";
+import {IsOptional, IsString} from "class-validator";
 
 
 export class ArticlesQuery extends FeedArticlesQuery {
 
+    @IsOptional()
     @IsString()
     tag?: string
 
+    @IsOptional()
     @IsString()
     author?: string
 
+    @IsOptional()
     @IsString()
-    favorited?: string
+    favoritedBy: string
 
 }

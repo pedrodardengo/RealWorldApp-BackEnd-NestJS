@@ -43,7 +43,7 @@ export class ExposedArticleDto {
         this.tagList = rawResult.tagList
         this.createdAt = rawResult.createdAt
         this.updatedAt = rawResult.updatedAt
-        this.favorited = rawResult.favorited
+        this.favorited = Boolean(rawResult.favorited)
         this.author = new ProfileDto().build(
             rawResult.username,
             rawResult.following,

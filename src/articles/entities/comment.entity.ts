@@ -15,7 +15,7 @@ export class Comment {
     @UpdateDateColumn()
     updatedAt: Date
 
-    @Column()
+    @Column({type: "text"})
     body: string
 
     @ManyToOne(() => Article, article => article.comments)
