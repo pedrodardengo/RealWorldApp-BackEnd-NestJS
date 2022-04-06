@@ -1,22 +1,20 @@
-import {Expose} from "class-transformer";
-import {PartialType} from "@nestjs/mapped-types";
-import {User} from "../entities/user.entity";
-
+import { Expose } from "class-transformer";
+import { PartialType } from "@nestjs/mapped-types";
+import { User } from "../entities/user.entity";
 
 export class UserDto extends PartialType(User) {
+  @Expose()
+  username: string;
 
-    @Expose()
-    username: string
+  @Expose()
+  email: string;
 
-    @Expose()
-    email: string
+  @Expose()
+  bio?: string;
 
-    @Expose()
-    bio?: string
+  @Expose()
+  imageUrl?: string;
 
-    @Expose()
-    imageUrl?: string
-
-    @Expose()
-    token?: string
+  @Expose()
+  token?: string;
 }

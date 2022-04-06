@@ -1,68 +1,66 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    OneToMany,
-    JoinTable,
-    ManyToMany,
-    BeforeInsert, BeforeUpdate,
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from "typeorm";
-import {FollowRelation} from "./follow-relation.entity";
-import {Article} from "../../articles/entities/article.entity";
-import {Comment} from "../../articles/entities/comment.entity";
+import { FollowRelation } from "./follow-relation.entity";
+import { Article } from "../../articles/entities/article.entity";
+import { Comment } from "../../articles/entities/comment.entity";
 import { hashPassword } from "src/auth/security/hash-password";
-import {CreateUserDto} from "../dto/create-user.dto";
+import { CreateUserDto } from "../dto/create-user.dto";
 
-
-@Entity({name: 'User'})
+@Entity({ name: "User" })
 export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column({ unique: true })
+  username: string;
 
-    @Column({ unique: true })
-    username: string
+  @Column({ unique: true })
+  email: string;
 
-    @Column({ unique: true })
-    email: string
+  @Column()
+  password: string;
 
-    @Column()
-    password: string
+  @Column({ nullable: true })
+  bio?: string;
 
+  @Column({ nullable: true })
+  imageUrl?: string;
 
-    @Column({nullable: true})
-    bio?: string
+  @OneToMany(() => FollowRelation, (follower) => follower.user)
+  @JoinTable({ name: "FollowRelation" })
+  followers: FollowRelation[];
 
-    @Column({nullable: true})
-    imageUrl?: string
+  @OneToMany(() => Article, (article) => article.author)
+  articles: Article[];
 
-    @OneToMany(() => FollowRelation, follower => follower.user)
-    @JoinTable({name: 'FollowRelation'})
-    followers: FollowRelation[];
+  @ManyToMany(() => Article, (article) => article.favoritedBy)
+  favoriteArticles: Article[];
 
-    @OneToMany(() => Article, article => article.author)
-    articles: Article[]
+  @OneToMany(() => Comment, (comment) => comment.author)
+  comments: Comment[];
 
-    @ManyToMany(() => Article, article => article.favoritedBy)
-    favoriteArticles: Article[]
+  @BeforeInsert()
+  @BeforeUpdate()
+  async hashPassword(): Promise<string> {
+    if (this.password.length < 32)
+      this.password = await hashPassword(this.password);
+    return this.password;
+  }
 
-    @OneToMany(() => Comment, comment => comment.author)
-    comments: Comment[]
-
-    @BeforeInsert()
-    @BeforeUpdate()
-    async hashPassword(): Promise<string> {
-        if (this.password.length < 32) this.password = await hashPassword(this.password)
-        return this.password
-    }
-
-    build(incomingUser: CreateUserDto): User {
-        this.username = incomingUser.username
-        this.password = incomingUser.password
-        this.email = incomingUser.email
-        if (incomingUser.bio) this.bio = incomingUser.bio
-        if (incomingUser.imageUrl) this.imageUrl = incomingUser.imageUrl
-        return this
-    }
-
+  build(incomingUser: CreateUserDto): User {
+    this.username = incomingUser.username;
+    this.password = incomingUser.password;
+    this.email = incomingUser.email;
+    if (incomingUser.bio) this.bio = incomingUser.bio;
+    if (incomingUser.imageUrl) this.imageUrl = incomingUser.imageUrl;
+    return this;
+  }
 }
