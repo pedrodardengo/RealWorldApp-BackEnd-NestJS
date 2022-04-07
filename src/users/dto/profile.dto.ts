@@ -14,12 +14,7 @@ export class ProfileDto {
   @Expose()
   imageUrl?: string
 
-  build(
-    username: string,
-    following = false,
-    bio?: string,
-    imageUrl?: string
-  ): ProfileDto {
+  build(username: string, following = false, bio?: string, imageUrl?: string): ProfileDto {
     this.username = username
     this.following = Boolean(following)
     this.bio = bio

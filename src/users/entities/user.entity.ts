@@ -50,8 +50,7 @@ export class User {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<string> {
-    if (this.password.length < 32)
-      this.password = await hashPassword(this.password)
+    if (this.password.length < 32) this.password = await hashPassword(this.password)
     return this.password
   }
 

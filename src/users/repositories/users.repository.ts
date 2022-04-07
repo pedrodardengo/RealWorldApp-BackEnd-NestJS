@@ -11,28 +11,18 @@ export class UsersRepository extends Repository<User> {
     return await this.manager.save(user)
   }
 
-  async updateUserReturningIt(
-    id: number,
-    updateUserData: UpdateUserDto
-  ): Promise<User> {
-    return await this.manager
-      .getRepository(User)
-      .save({ id, ...updateUserData })
+  async updateUserReturningIt(id: number, updateUserData: UpdateUserDto): Promise<User> {
+    return await this.manager.getRepository(User).save({ id, ...updateUserData })
   }
 
-  async findAUserByEmailOrUsername(
-    email: string,
-    username: string
-  ): Promise<User> {
+  async findAUserByEmailOrUsername(email: string, username: string): Promise<User> {
     return await this.manager.findOne(User, {
       where: [{ username }, { email }]
     })
   }
 
   async doesUserFollowProfile(user: number, follower: number) {
-    return Boolean(
-      await this.manager.findOne(FollowRelation, { where: { user, follower } })
-    )
+    return Boolean(await this.manager.findOne(FollowRelation, { where: { user, follower } }))
   }
 
   async followUser(userId: number, profileUserId: number): Promise<void> {

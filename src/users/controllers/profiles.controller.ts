@@ -14,26 +14,17 @@ export class ProfilesController {
   constructor(private profileService: ProfilesService) {}
 
   @Get("/:username")
-  async getProfile(
-    @RequestingUserIdPipe() id: number,
-    @Param("username") username: string
-  ): Promise<ProfileDto> {
+  async getProfile(@RequestingUserIdPipe() id: number, @Param("username") username: string): Promise<ProfileDto> {
     return await this.profileService.getProfile(id, username)
   }
 
   @Post("/:username/follow")
-  async followUser(
-    @RequestingUserIdPipe() id: number,
-    @Param("username") username: string
-  ): Promise<ProfileDto> {
+  async followUser(@RequestingUserIdPipe() id: number, @Param("username") username: string): Promise<ProfileDto> {
     return await this.profileService.followUser(id, username)
   }
 
   @Delete("/:username/follow")
-  async unfollowUSer(
-    @RequestingUserIdPipe() id: number,
-    @Param("username") username: string
-  ): Promise<ProfileDto> {
+  async unfollowUSer(@RequestingUserIdPipe() id: number, @Param("username") username: string): Promise<ProfileDto> {
     return await this.profileService.unfollowUser(id, username)
   }
 }

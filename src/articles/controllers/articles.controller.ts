@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-  UseGuards
-} from "@nestjs/common"
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common"
 import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
 import { ArticlesService } from "../services/articles.service"
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
@@ -44,10 +34,7 @@ export class ArticlesController {
 
   @dataWrapper("article")
   @Get("/:slug")
-  async getArticle(
-    @RequestingUserIdPipe() id: number,
-    @Param("slug") slug: string
-  ): Promise<ExposedArticleDto> {
+  async getArticle(@RequestingUserIdPipe() id: number, @Param("slug") slug: string): Promise<ExposedArticleDto> {
     return await this.articlesService.getArticle(id, slug)
   }
 
@@ -70,36 +57,19 @@ export class ArticlesController {
   }
 
   @Delete("/:slug")
-  async deleteArticle(
-    @RequestingUserIdPipe() id: number,
-    @Param("slug") slug: string
-  ): Promise<void> {
+  async deleteArticle(@RequestingUserIdPipe() id: number, @Param("slug") slug: string): Promise<void> {
     return this.articlesService.deleteArticle(id, slug)
   }
 
   @dataWrapper("article")
   @Post("/:slug/favorite")
-  async favoriteArticle(
-    @RequestingUserIdPipe() id: number,
-    @Param("slug") slug: string
-  ): Promise<ExposedArticleDto> {
-    return await this.articlesService.changeArticleFavoritismStatus(
-      true,
-      id,
-      slug
-    )
+  async favoriteArticle(@RequestingUserIdPipe() id: number, @Param("slug") slug: string): Promise<ExposedArticleDto> {
+    return await this.articlesService.changeArticleFavoritismStatus(true, id, slug)
   }
 
   @dataWrapper("article")
   @Delete("/:slug/favorite")
-  async unfavoriteArticle(
-    @RequestingUserIdPipe() id: number,
-    @Param("slug") slug: string
-  ): Promise<ExposedArticleDto> {
-    return await this.articlesService.changeArticleFavoritismStatus(
-      false,
-      id,
-      slug
-    )
+  async unfavoriteArticle(@RequestingUserIdPipe() id: number, @Param("slug") slug: string): Promise<ExposedArticleDto> {
+    return await this.articlesService.changeArticleFavoritismStatus(false, id, slug)
   }
 }

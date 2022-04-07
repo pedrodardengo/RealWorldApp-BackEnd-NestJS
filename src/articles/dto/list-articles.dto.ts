@@ -10,9 +10,7 @@ export class ListArticlesDto {
     return this
   }
 
-  mapFromMixedArticlesList(
-    listMixedArticleData: MixedArticleData[]
-  ): ListArticlesDto {
+  mapFromMixedArticlesList(listMixedArticleData: MixedArticleData[]): ListArticlesDto {
     const exposedArticlesList = listMixedArticleData.map((rawObject) =>
       new ExposedArticleDto().mapFromMixedData(rawObject)
     )

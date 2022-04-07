@@ -12,10 +12,7 @@ import { TokenizedUser } from "../../users/types/users.types"
 @securityWrapper(UserDto)
 @dataWrapper("user")
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private usersService: UsersService
-  ) {}
+  constructor(private authService: AuthService, private usersService: UsersService) {}
 
   @Post("/login")
   async login(@Body("user") loginData: LoginDto): Promise<TokenizedUser> {
@@ -23,9 +20,7 @@ export class AuthController {
   }
 
   @Post()
-  async registerUser(
-    @Body("user") createUserData: CreateUserDto
-  ): Promise<TokenizedUser> {
+  async registerUser(@Body("user") createUserData: CreateUserDto): Promise<TokenizedUser> {
     return await this.usersService.registerUser(createUserData)
   }
 }

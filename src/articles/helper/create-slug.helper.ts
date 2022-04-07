@@ -4,9 +4,7 @@ export function createSlug(title: string): string {
 
   return title
     .split("")
-    .map((letter, i) =>
-      letter.replace(new RegExp(from.charAt(i), "g"), to.charAt(i))
-    ) // Changes ex.: from ñ to n
+    .map((letter, i) => letter.replace(new RegExp(from.charAt(i), "g"), to.charAt(i))) // Changes ex.: from ñ to n
     .toString() // Cast to string
     .toLowerCase() // Convert the string to lowercase letters
     .trim() // Remove whitespace from both sides of a string

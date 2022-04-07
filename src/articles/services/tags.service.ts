@@ -14,13 +14,7 @@ export class TagsService {
 
   async fetchTagsCreatingThoseThatDoesntExist(tags: string[]): Promise<Tag[]> {
     const allTags: Tag[] = tags.map((tagName) => new Tag(tagName))
-    await this.tagsRepo.manager
-      .createQueryBuilder()
-      .insert()
-      .into(Tag)
-      .values(allTags)
-      .orIgnore()
-      .execute()
+    await this.tagsRepo.manager.createQueryBuilder().insert().into(Tag).values(allTags).orIgnore().execute()
     return await this.tagsRepo.manager
       .createQueryBuilder()
       .from(Tag, "Tag")

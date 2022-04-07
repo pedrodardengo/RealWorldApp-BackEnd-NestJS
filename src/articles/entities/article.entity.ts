@@ -54,13 +54,7 @@ export class Article {
   @OneToMany(() => Comment, (comment) => comment.article)
   comments: Comment[]
 
-  constructor(
-    title: string,
-    description: string,
-    body: string,
-    author: User,
-    tagList: Tag[]
-  ) {
+  constructor(title: string, description: string, body: string, author: User, tagList: Tag[]) {
     this.title = title
     this.description = description
     this.body = body

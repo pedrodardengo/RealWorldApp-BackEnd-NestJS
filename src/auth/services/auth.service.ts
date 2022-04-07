@@ -9,32 +9,18 @@ import { AUTH_MESSAGES } from "../../exceptions/messages.exceptions"
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private tokenService: TokenService
-  ) {}
+  constructor(private usersService: UsersService, private tokenService: TokenService) {}
 
   async login(loginData: LoginDto): Promise<TokenizedUser> {
-    const user = await this.authenticateUser(
-      loginData.email,
-      loginData.password
-    )
+    const user = await this.authenticateUser(loginData.email, loginData.password)
     return this.tokenService.addTokenToUser(user)
   }
 
-  private async authenticateUser(
-    email: string,
-    password: string
-  ): Promise<Partial<User>> {
+  private async authenticateUser(email: string, password: string): Promise<Partial<User>> {
     const user = await this.usersService.getUserWithToken({ email })
-    if (!user)
-      throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED_CREDENTIALS)
-    const doesPasswordMatch = await comparePasswordToHash(
-      password,
-      user.password
-    )
-    if (!doesPasswordMatch)
-      throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED_CREDENTIALS)
+    if (!user) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED_CREDENTIALS)
+    const doesPasswordMatch = await comparePasswordToHash(password, user.password)
+    if (!doesPasswordMatch) throw new UnauthorizedException(AUTH_MESSAGES.UNAUTHORIZED_CREDENTIALS)
     return user
   }
 }

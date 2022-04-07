@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UseGuards
-} from "@nestjs/common"
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common"
 import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
 import { CreateCommentDto } from "../dto/create-comment.dto"
@@ -40,10 +32,7 @@ export class CommentsController {
 
   @dataWrapper("comment")
   @Delete("/:slug/comments/:id")
-  async deleteComment(
-    @RequestingUserIdPipe() requestingUserId: number,
-    @Param("id") id: number
-  ): Promise<void> {
+  async deleteComment(@RequestingUserIdPipe() requestingUserId: number, @Param("id") id: number): Promise<void> {
     return this.commentsService.deleteComment(requestingUserId, id)
   }
 }

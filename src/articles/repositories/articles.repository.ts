@@ -11,18 +11,8 @@ import { FeedArticlesQuery } from "../types/feed-articles.query"
 
 @EntityRepository(Article)
 export class ArticlesRepository extends Repository<Article> {
-  async createAndSaveArticle(
-    articleDto: CreateArticleDto,
-    author: User,
-    TagList: Tag[]
-  ): Promise<Article> {
-    const article = new Article(
-      articleDto.title,
-      articleDto.description,
-      articleDto.body,
-      author,
-      TagList
-    )
+  async createAndSaveArticle(articleDto: CreateArticleDto, author: User, TagList: Tag[]): Promise<Article> {
+    const article = new Article(articleDto.title, articleDto.description, articleDto.body, author, TagList)
     return await this.manager.save(Article, article)
   }
 
@@ -37,10 +27,7 @@ export class ArticlesRepository extends Repository<Article> {
       .getArticleBySlug(slug)
   }
 
-  async getMostRecentArticles(
-    requestingUserId: number,
-    articlesQuery: ArticlesQuery
-  ): Promise<MixedArticleData[]> {
+  async getMostRecentArticles(requestingUserId: number, articlesQuery: ArticlesQuery): Promise<MixedArticleData[]> {
     return await new SelectArticleQueryBuilder(this.manager)
       .selectMainFields()
       .filterByListOfTags(articlesQuery.tag)
@@ -58,9 +45,7 @@ export class ArticlesRepository extends Repository<Article> {
     requestingUserId: number,
     feedArticleQuery: FeedArticlesQuery
   ): Promise<MixedArticleData[]> {
-    const listMixedArticleData = await new SelectArticleQueryBuilder(
-      this.manager
-    )
+    const listMixedArticleData = await new SelectArticleQueryBuilder(this.manager)
       .selectMainFields()
       .joinWithAuthor()
       .filterByAuthorsThatUserFollows(requestingUserId)
@@ -85,9 +70,7 @@ export class ArticlesRepository extends Repository<Article> {
   }
 
   async unfavoriteArticle(userId: number, articleId: number) {
-    await this.manager
-      .getRepository("FavoritedArticleRelation")
-      .delete({ articleId, userId })
+    await this.manager.getRepository("FavoritedArticleRelation").delete({ articleId, userId })
   }
 }
 
@@ -95,9 +78,7 @@ class SelectArticleQueryBuilder {
   private queryBuilder: SelectQueryBuilder<Article>
 
   constructor(queryBuilder) {
-    this.queryBuilder = queryBuilder
-      .createQueryBuilder()
-      .from(Article, "Article")
+    this.queryBuilder = queryBuilder.createQueryBuilder().from(Article, "Article")
   }
 
   selectMainFields(): SelectArticleQueryBuilder {
@@ -140,9 +121,7 @@ class SelectArticleQueryBuilder {
     return this
   }
 
-  filterByAuthorsThatUserFollows(
-    requestingUserId: number
-  ): SelectArticleQueryBuilder {
+  filterByAuthorsThatUserFollows(requestingUserId: number): SelectArticleQueryBuilder {
     this.queryBuilder
       .innerJoin(FollowRelation, "FR1", "FR1.userId = Article.authorId")
       .andWhere("FR1.followerId = :requestingUserId", { requestingUserId })
@@ -152,20 +131,14 @@ class SelectArticleQueryBuilder {
   filterByFavoritedByUser(username?: string): SelectArticleQueryBuilder {
     if (username) {
       this.queryBuilder
-        .innerJoin(
-          "FavoritedArticleRelation",
-          "FAR",
-          "FAR.articleId = Article.id"
-        )
+        .innerJoin("FavoritedArticleRelation", "FAR", "FAR.articleId = Article.id")
         .innerJoin(User, "UserF", "UserF.id = FAR.userId")
         .where("UserF.username = :usernameF", { usernameF: username })
     }
     return this
   }
 
-  findIfRequestingUserFollowsArticleAuthor(
-    requestingUserId: number
-  ): SelectArticleQueryBuilder {
+  findIfRequestingUserFollowsArticleAuthor(requestingUserId: number): SelectArticleQueryBuilder {
     this.queryBuilder.addSelect(
       (qb) =>
         qb.select(
@@ -183,9 +156,7 @@ class SelectArticleQueryBuilder {
     return this
   }
 
-  findIfArticleIsFavoritedByRequestingUser(
-    requestingUserId: number
-  ): SelectArticleQueryBuilder {
+  findIfArticleIsFavoritedByRequestingUser(requestingUserId: number): SelectArticleQueryBuilder {
     this.queryBuilder.addSelect(
       (qb) =>
         qb.select(
@@ -193,10 +164,7 @@ class SelectArticleQueryBuilder {
             qb
               .from("FavoritedArticleRelation", "FAR2")
               .innerJoin(User, "U2", "U2.id = FAR2.userId")
-              .where(
-                "FAR2.articleId = Article.id AND U2.id = :requestingUserId",
-                { requestingUserId }
-              )
+              .where("FAR2.articleId = Article.id AND U2.id = :requestingUserId", { requestingUserId })
           )
         ),
       "favorited"
@@ -244,11 +212,8 @@ class SelectArticleQueryBuilder {
   }
 
   async getArticleBySlug(slug: string): Promise<MixedArticleData> {
-    return await this.queryBuilder
-      .where("Article.slug = :slug", { slug })
-      .getRawOne()
+    return await this.queryBuilder.where("Article.slug = :slug", { slug }).getRawOne()
   }
 
-  private existsQuery = <T>(builder: SelectQueryBuilder<T>) =>
-    `EXISTS (${builder.getQuery()})`
+  private existsQuery = <T>(builder: SelectQueryBuilder<T>) => `EXISTS (${builder.getQuery()})`
 }

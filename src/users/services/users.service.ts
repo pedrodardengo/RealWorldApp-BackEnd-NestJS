@@ -8,10 +8,7 @@ import { USER_MESSAGES } from "../../exceptions/messages.exceptions"
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private usersRepo: UsersRepository,
-    private tokenService: TokenService
-  ) {}
+  constructor(private usersRepo: UsersRepository, private tokenService: TokenService) {}
 
   async registerUser(incomingUser: CreateUserDto): Promise<TokenizedUser> {
     await this.throwIfUserExists(incomingUser)
@@ -25,27 +22,16 @@ export class UsersService {
     return this.tokenService.addTokenToUser(user)
   }
 
-  async update(
-    id: number,
-    updateUserData: UpdateUserDto
-  ): Promise<TokenizedUser> {
+  async update(id: number, updateUserData: UpdateUserDto): Promise<TokenizedUser> {
     const user = await this.usersRepo.updateUserReturningIt(id, updateUserData)
     return this.tokenService.addTokenToUser(user)
   }
 
   private async throwIfUserExists(user: CreateUserDto): Promise<void> {
-    const dataFound = await this.usersRepo.findAUserByEmailOrUsername(
-      user.email,
-      user.username
-    )
+    const dataFound = await this.usersRepo.findAUserByEmailOrUsername(user.email, user.username)
     if (dataFound === undefined) return
-    if (dataFound.email === user.email)
-      throw new ConflictException(
-        USER_MESSAGES.EMAIL_ALREADY_EXISTS(user.email)
-      )
+    if (dataFound.email === user.email) throw new ConflictException(USER_MESSAGES.EMAIL_ALREADY_EXISTS(user.email))
     if (dataFound.username === user.username)
-      throw new ConflictException(
-        USER_MESSAGES.USERNAME_ALREADY_EXISTS(user.username)
-      )
+      throw new ConflictException(USER_MESSAGES.USERNAME_ALREADY_EXISTS(user.username))
   }
 }
