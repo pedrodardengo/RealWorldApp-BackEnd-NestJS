@@ -1,14 +1,13 @@
 import { Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common"
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
-import { securityWrapper } from "../../interceptors/security.interceptor"
 import { ProfileDto } from "../dto/profile.dto"
 import { ProfilesService } from "../services/profiles.service"
 import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
+import { UserWithFollowingInfo } from "../types/users.types"
+import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/profiles")
-@securityWrapper(ProfileDto)
-@dataWrapper("profile")
+@ResponseMapper(ProfileDto)
 @UseGuards(JwtAuthGuard)
 export class ProfilesController {
   constructor(private profileService: ProfilesService) {}
@@ -17,7 +16,7 @@ export class ProfilesController {
   async getProfile(
     @RequestingUserIdPipe() id: number,
     @Param("username") username: string
-  ): Promise<ProfileDto> {
+  ): Promise<UserWithFollowingInfo> {
     return await this.profileService.getProfile(id, username)
   }
 
@@ -25,15 +24,15 @@ export class ProfilesController {
   async followUser(
     @RequestingUserIdPipe() id: number,
     @Param("username") username: string
-  ): Promise<ProfileDto> {
-    return await this.profileService.followUser(id, username)
+  ): Promise<UserWithFollowingInfo> {
+    return await this.profileService.changeFollowStatus(id, username, true)
   }
 
   @Delete("/:username/follow")
   async unfollowUSer(
     @RequestingUserIdPipe() id: number,
     @Param("username") username: string
-  ): Promise<ProfileDto> {
-    return await this.profileService.unfollowUser(id, username)
+  ): Promise<UserWithFollowingInfo> {
+    return await this.profileService.changeFollowStatus(id, username, false)
   }
 }

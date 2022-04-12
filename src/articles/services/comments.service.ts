@@ -4,7 +4,7 @@ import { Repository, SelectQueryBuilder } from "typeorm"
 import { Comment } from "../entities/comment.entity"
 import { ArticlesRepository } from "../repositories/articles.repository"
 import { UsersRepository } from "../../users/repositories/users.repository"
-import { ExposedCommentDto } from "../dto/exposed-comment.dto"
+import { CommentWithProfile } from "../dto/exposed-comment.dto"
 import { ProfileDto } from "../../users/dto/profile.dto"
 import { Article } from "../entities/article.entity"
 import { User } from "../../users/entities/user.entity"
@@ -19,14 +19,14 @@ export class CommentsService {
     private usersRepo: UsersRepository
   ) {}
 
-  async createComment(authorId: number, slug: string, body: string): Promise<ExposedCommentDto> {
+  async createComment(authorId: number, slug: string, body: string): Promise<CommentWithProfile> {
     const author = await this.usersRepo.findOne(authorId)
     const profile = new ProfileDto().mapFromUser(author, false)
     const article = await this.articlesRepo.findOne({ where: { slug } })
     if (!article) throw new NotFoundException(ARTICLE_MESSAGES.ARTICLE_NOT_FOUND(slug))
     let comment = this.commentsRepo.create({ body, author, article })
     comment = await this.commentsRepo.save(comment)
-    return new ExposedCommentDto().mapFromCommentAndProfile(profile, comment)
+    return { ...profile, ...comment }
   }
 
   async deleteComment(requestingUserId: number, commentId: number): Promise<void> {
@@ -41,7 +41,7 @@ export class CommentsService {
     const article = await this.articlesRepo.findOne({ where: { slug } })
     if (!article) throw new NotFoundException(ARTICLE_MESSAGES.ARTICLE_NOT_FOUND(slug))
     const existsQuery = <T>(builder: SelectQueryBuilder<T>) => `EXISTS (${builder.getQuery()})`
-    const listMixedCommentData = await this.commentsRepo.manager
+    return await this.commentsRepo.manager
       .createQueryBuilder()
       .from(Comment, "Comment")
       .select([
@@ -71,8 +71,5 @@ export class CommentsService {
         "following"
       )
       .getRawMany()
-    return listMixedCommentData.map((mixedCommentData) =>
-      new ExposedCommentDto().mapFromMixedData(mixedCommentData)
-    )
   }
 }

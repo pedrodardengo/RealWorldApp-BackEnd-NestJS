@@ -3,14 +3,12 @@ import { AuthService } from "../services/auth.service"
 import { LoginDto } from "../dto/login.dto"
 import { CreateUserDto } from "../../users/dto/create-user.dto"
 import { UsersService } from "../../users/services/users.service"
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
-import { securityWrapper } from "../../interceptors/security.interceptor"
 import { UserDto } from "../../users/dto/user.dto"
 import { TokenizedUser } from "../../users/types/users.types"
+import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/users")
-@securityWrapper(UserDto)
-@dataWrapper("user")
+@ResponseMapper(UserDto)
 export class AuthController {
   constructor(private authService: AuthService, private usersService: UsersService) {}
 

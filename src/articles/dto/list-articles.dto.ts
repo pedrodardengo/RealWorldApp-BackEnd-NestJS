@@ -1,6 +1,7 @@
-import { ExposedArticleDto, MixedArticleData } from "./exposed-article.dto"
+import { ArticleWithProfile, ExposedArticleDto } from "./exposed-article.dto"
+import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
 
-export class ListArticlesDto {
+export class ListArticlesDto implements ResponseDTO {
   articles: ExposedArticleDto[]
   articlesCount: number
 
@@ -10,7 +11,7 @@ export class ListArticlesDto {
     return this
   }
 
-  mapFromMixedArticlesList(listMixedArticleData: MixedArticleData[]): ListArticlesDto {
+  mapToResponse(listMixedArticleData: ArticleWithProfile[]): ListArticlesDto {
     const exposedArticlesList = listMixedArticleData.map((rawObject) =>
       new ExposedArticleDto().mapFromMixedData(rawObject)
     )

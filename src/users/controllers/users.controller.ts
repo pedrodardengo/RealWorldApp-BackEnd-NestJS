@@ -2,15 +2,13 @@ import { Body, Controller, Get, Put, UseGuards } from "@nestjs/common"
 import { UsersService } from "../services/users.service"
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
 import { UpdateUserDto } from "../dto/update-user.dto"
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
 import { TokenizedUser } from "../types/users.types"
-import { securityWrapper } from "../../interceptors/security.interceptor"
 import { UserDto } from "../dto/user.dto"
 import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
+import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/user")
-@securityWrapper(UserDto)
-@dataWrapper("user")
+@ResponseMapper(UserDto)
 @UseGuards(JwtAuthGuard)
 export class UsersController {
   constructor(private usersService: UsersService) {}

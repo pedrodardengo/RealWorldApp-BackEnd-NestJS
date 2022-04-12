@@ -1,61 +1,63 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common"
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
 import { ArticlesService } from "../services/articles.service"
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
 import { CreateArticleDto } from "../dto/create-article.dto"
 import { ArticlesQuery } from "../types/articles.query"
 import { FeedArticlesQuery } from "../types/feed-articles.query"
 import { UpdateArticleDto } from "../dto/update-article.dto"
-import { ExposedArticleDto } from "../dto/exposed-article.dto"
+import { ArticleWithProfile, ExposedArticleDto } from "../dto/exposed-article.dto"
 import { ListArticlesDto } from "../dto/list-articles.dto"
 import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
+import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/articles")
 @UseGuards(JwtAuthGuard)
 export class ArticlesController {
   constructor(private articlesService: ArticlesService) {}
 
-  @dataWrapper("article")
+  @ResponseMapper(ExposedArticleDto)
   @Post()
   async createArticle(
     @RequestingUserIdPipe() id: number,
     @Body("article") article: CreateArticleDto
-  ): Promise<ExposedArticleDto> {
+  ): Promise<ArticleWithProfile> {
     return this.articlesService.createArticle(id, article)
   }
 
+  @ResponseMapper(ListArticlesDto)
   @Get("/feed")
   async getFeedOfArticles(
     @RequestingUserIdPipe() id: number,
     @Query() query: FeedArticlesQuery
-  ): Promise<ListArticlesDto> {
+  ): Promise<ArticleWithProfile[]> {
     return this.articlesService.getFeedOfArticles(id, query)
   }
 
-  @dataWrapper("article")
+  @ResponseMapper(ExposedArticleDto)
   @Get("/:slug")
   async getArticle(
     @RequestingUserIdPipe() id: number,
     @Param("slug") slug: string
-  ): Promise<ExposedArticleDto> {
+  ): Promise<ArticleWithProfile> {
     return await this.articlesService.getArticle(id, slug)
   }
 
+  @ResponseMapper(ListArticlesDto)
   @Get()
   async getMostRecentArticles(
     @RequestingUserIdPipe() id: number,
     @Query() query: ArticlesQuery
-  ): Promise<ListArticlesDto> {
+  ): Promise<ArticleWithProfile[]> {
     return await this.articlesService.getMostRecentArticles(id, query)
   }
 
-  @dataWrapper("article")
+  @ResponseMapper(ExposedArticleDto)
   @Put("/:slug")
   async updateArticle(
     @RequestingUserIdPipe() id: number,
     @Param("slug") slug: string,
     @Body("article") body: UpdateArticleDto
-  ): Promise<ExposedArticleDto> {
+  ): Promise<ArticleWithProfile> {
     return this.articlesService.updateArticle(id, slug, body)
   }
 
@@ -64,21 +66,21 @@ export class ArticlesController {
     return this.articlesService.deleteArticle(id, slug)
   }
 
-  @dataWrapper("article")
+  @ResponseMapper(ExposedArticleDto)
   @Post("/:slug/favorite")
   async favoriteArticle(
     @RequestingUserIdPipe() id: number,
     @Param("slug") slug: string
-  ): Promise<ExposedArticleDto> {
+  ): Promise<ArticleWithProfile> {
     return await this.articlesService.changeArticleFavoritismStatus(true, id, slug)
   }
 
-  @dataWrapper("article")
+  @ResponseMapper(ExposedArticleDto)
   @Delete("/:slug/favorite")
   async unfavoriteArticle(
     @RequestingUserIdPipe() id: number,
     @Param("slug") slug: string
-  ): Promise<ExposedArticleDto> {
+  ): Promise<ArticleWithProfile> {
     return await this.articlesService.changeArticleFavoritismStatus(false, id, slug)
   }
 }

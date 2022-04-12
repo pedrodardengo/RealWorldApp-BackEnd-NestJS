@@ -6,7 +6,7 @@ import { Tag } from "../entities/tag.entity"
 import { ArticlesQuery } from "../types/articles.query"
 import { FollowRelation } from "../../users/entities/follow-relation.entity"
 import { isString } from "class-validator"
-import { MixedArticleData } from "../dto/exposed-article.dto"
+import { ArticleWithProfile } from "../dto/exposed-article.dto"
 import { FeedArticlesQuery } from "../types/feed-articles.query"
 
 @EntityRepository(Article)
@@ -30,7 +30,7 @@ export class ArticlesRepository extends Repository<Article> {
   async getMostRecentArticles(
     requestingUserId: number,
     articlesQuery: ArticlesQuery
-  ): Promise<MixedArticleData[]> {
+  ): Promise<ArticleWithProfile[]> {
     return await new SelectArticleQueryBuilder(this.manager)
       .selectMainFields()
       .filterByListOfTags(articlesQuery.tag)
@@ -47,7 +47,7 @@ export class ArticlesRepository extends Repository<Article> {
   async getMostRecentArticlesFromWhomUserFollows(
     requestingUserId: number,
     feedArticleQuery: FeedArticlesQuery
-  ): Promise<MixedArticleData[]> {
+  ): Promise<ArticleWithProfile[]> {
     const listMixedArticleData = await new SelectArticleQueryBuilder(this.manager)
       .selectMainFields()
       .joinWithAuthor()
@@ -200,7 +200,7 @@ class SelectArticleQueryBuilder {
     return this
   }
 
-  async getResults(offset: number, limit: number): Promise<MixedArticleData[]> {
+  async getResults(offset: number, limit: number): Promise<ArticleWithProfile[]> {
     return await this.queryBuilder
       .groupBy(
         "Article.title, Article.slug, Article.description, Article.body, " +
@@ -214,7 +214,7 @@ class SelectArticleQueryBuilder {
       .getRawMany()
   }
 
-  async getArticleBySlug(slug: string): Promise<MixedArticleData> {
+  async getArticleBySlug(slug: string): Promise<ArticleWithProfile> {
     return await this.queryBuilder.where("Article.slug = :slug", { slug }).getRawOne()
   }
 

@@ -1,14 +1,14 @@
 import { Controller, Get } from "@nestjs/common"
-import { dataWrapper } from "../../interceptors/data-wrapper.interceptor"
 import { TagsService } from "../services/tags.service"
+import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/tags")
-@dataWrapper("tags")
 export class TagsController {
   constructor(private tagsService: TagsService) {}
 
+  @ResponseMapper("tags")
   @Get()
-  async getAllTags(): Promise<string[]> {
-    return this.tagsService.getAllTags()
+  async getAllTags(): Promise<{ tags: string[] }> {
+    return { tags: await this.tagsService.getAllTags() }
   }
 }

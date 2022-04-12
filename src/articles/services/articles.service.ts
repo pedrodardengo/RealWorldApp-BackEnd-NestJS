@@ -1,12 +1,11 @@
 import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common"
 import { CreateArticleDto } from "../dto/create-article.dto"
 import { TagsService } from "./tags.service"
-import { ExposedArticleDto } from "../dto/exposed-article.dto"
+import { ArticleWithProfile } from "../dto/exposed-article.dto"
 import { ProfileDto } from "../../users/dto/profile.dto"
 import { UsersRepository } from "../../users/repositories/users.repository"
 import { ArticlesRepository } from "../repositories/articles.repository"
 import { ArticlesQuery } from "../types/articles.query"
-import { ListArticlesDto } from "../dto/list-articles.dto"
 import { FeedArticlesQuery } from "../types/feed-articles.query"
 import { ARTICLE_MESSAGES, AUTH_MESSAGES } from "../../exceptions/messages.exceptions"
 import { UpdateArticleDto } from "../dto/update-article.dto"
@@ -21,43 +20,41 @@ export class ArticlesService {
     private tagsService: TagsService
   ) {}
 
-  async createArticle(authorId: number, articleDto: CreateArticleDto): Promise<ExposedArticleDto> {
+  async createArticle(authorId: number, articleDto: CreateArticleDto): Promise<ArticleWithProfile> {
     await this.throwIfTitleExists(articleDto.title)
     const author = await this.usersRepo.findOne(authorId)
     if (!articleDto.tagList) articleDto.tagList = []
     const tags = await this.tagsService.fetchTagsCreatingThoseThatDoesntExist(articleDto.tagList)
     const article = await this.articlesRepo.createAndSaveArticle(articleDto, author, tags)
     const authorProfile = new ProfileDto().mapFromUser(author, false)
-    return new ExposedArticleDto().mapFromArticleAndAuthor(article, authorProfile)
+    return { ...article, ...authorProfile, favorited: false, favoritesCount: 0 }
   }
 
-  async getArticle(requestingUserId: number, slug: string): Promise<ExposedArticleDto> {
+  async getArticle(requestingUserId: number, slug: string): Promise<ArticleWithProfile> {
     const mixedArticleData = await this.articlesRepo.getArticle(requestingUserId, slug)
     if (!mixedArticleData) throw new NotFoundException(ARTICLE_MESSAGES.ARTICLE_NOT_FOUND(slug))
-    return new ExposedArticleDto().mapFromMixedData(mixedArticleData)
+    return mixedArticleData
   }
 
-  async getMostRecentArticles(userId: number, articleQuery: ArticlesQuery): Promise<ListArticlesDto> {
-    const listMixedArticleData = await this.articlesRepo.getMostRecentArticles(userId, articleQuery)
-    return new ListArticlesDto().mapFromMixedArticlesList(listMixedArticleData)
+  async getMostRecentArticles(userId: number, articleQuery: ArticlesQuery): Promise<ArticleWithProfile[]> {
+    return await this.articlesRepo.getMostRecentArticles(userId, articleQuery)
   }
 
   async getFeedOfArticles(
     requestingUserId: number,
     feedArticleQuery: FeedArticlesQuery
-  ): Promise<ListArticlesDto> {
-    const listMixedArticleData = await this.articlesRepo.getMostRecentArticlesFromWhomUserFollows(
+  ): Promise<ArticleWithProfile[]> {
+    return await this.articlesRepo.getMostRecentArticlesFromWhomUserFollows(
       requestingUserId,
       feedArticleQuery
     )
-    return new ListArticlesDto().mapFromMixedArticlesList(listMixedArticleData)
   }
 
   async changeArticleFavoritismStatus(
     toFavorite: boolean,
     requestingUserId: number,
     slug: string
-  ): Promise<ExposedArticleDto> {
+  ): Promise<ArticleWithProfile> {
     const articleId = (await this.findArticleOrThrow(slug)).id
     if (toFavorite) await this.articlesRepo.favoriteArticle(requestingUserId, articleId)
     else await this.articlesRepo.unfavoriteArticle(requestingUserId, articleId)
@@ -68,7 +65,7 @@ export class ArticlesService {
     requestingUserId: number,
     slug: string,
     updateArticleDto: UpdateArticleDto
-  ): Promise<ExposedArticleDto> {
+  ): Promise<ArticleWithProfile> {
     const article = await this.getArticleIfExistsAndAuthorized(requestingUserId, slug)
     if (updateArticleDto.title) slug = createSlug(updateArticleDto.title)
     await this.articlesRepo.update({ id: article.id }, { ...updateArticleDto, slug })

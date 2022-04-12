@@ -1,20 +1,19 @@
-import { Expose } from "class-transformer"
-import { PartialType } from "@nestjs/mapped-types"
-import { User } from "../entities/user.entity"
+import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { TokenizedUser } from "../types/users.types"
 
-export class UserDto extends PartialType(User) {
-  @Expose()
+export class UserDto implements ResponseDTO {
   username: string
-
-  @Expose()
   email: string
-
-  @Expose()
   bio?: string
-
-  @Expose()
   imageUrl?: string
-
-  @Expose()
   token?: string
+
+  mapToResponse(tokenizedUser: TokenizedUser): { user: UserDto } {
+    this.username = tokenizedUser.username
+    this.email = tokenizedUser.email
+    this.bio = tokenizedUser.bio
+    this.imageUrl = tokenizedUser.imageUrl
+    this.token = tokenizedUser.token
+    return { user: this }
+  }
 }

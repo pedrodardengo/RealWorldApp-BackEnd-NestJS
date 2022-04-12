@@ -1,44 +1,35 @@
 import { ProfileDto } from "../../users/dto/profile.dto"
-import { Comment } from "../entities/comment.entity"
+import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
 
-export class ExposedCommentDto {
+export class ExposedCommentDto implements ResponseDTO {
   id: number
   createdAt: Date
   updatedAt: Date
   body: string
   author: ProfileDto
 
-  mapFromCommentAndProfile(profile: ProfileDto, comment: Comment): ExposedCommentDto {
-    this.id = comment.id
-    this.author = profile
-    this.body = comment.body
-    this.createdAt = comment.createdAt
-    this.updatedAt = comment.updatedAt
+  mapFromMixedData(data: CommentWithProfile): ExposedCommentDto {
+    this.id = data.id
+    this.body = data.body
+    this.createdAt = data.createdAt
+    this.updatedAt = data.updatedAt
+    this.author = new ProfileDto().build(data.username, data.following, data.bio, data.imageUrl)
     return this
   }
 
-  mapFromMixedData(rawResult: MixedCommentData): ExposedCommentDto {
-    this.id = rawResult.id
-    this.body = rawResult.body
-    this.createdAt = rawResult.createdAt
-    this.updatedAt = rawResult.updatedAt
-    this.author = new ProfileDto().build(
-      rawResult.username,
-      rawResult.following,
-      rawResult.bio,
-      rawResult.imageUrl
-    )
-    return this
+  mapToResponse(data: CommentWithProfile): { comment: ExposedCommentDto } {
+    this.mapFromMixedData(data)
+    return { comment: this }
   }
 }
 
-export interface MixedCommentData {
+export interface CommentWithProfile {
   id: number
   body: string
   updatedAt: Date
   createdAt: Date
   username: string
-  bio: string
-  imageUrl: string
+  bio?: string
+  imageUrl?: string
   following: boolean
 }

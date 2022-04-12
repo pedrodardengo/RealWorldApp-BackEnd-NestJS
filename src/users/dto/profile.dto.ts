@@ -1,18 +1,20 @@
-import { Expose } from "class-transformer"
 import { User } from "../entities/user.entity"
+import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { UserWithFollowingInfo } from "../types/users.types"
 
-export class ProfileDto {
-  @Expose()
+export class ProfileDto implements ResponseDTO {
   username: string
-
-  @Expose()
   following: boolean
-
-  @Expose()
   bio?: string
-
-  @Expose()
   imageUrl?: string
+
+  mapToResponse(user: UserWithFollowingInfo): { profile: ProfileDto } {
+    this.username = user.username
+    this.following = user.following
+    this.bio = user.bio
+    this.imageUrl = user.imageUrl
+    return { profile: this }
+  }
 
   build(username: string, following = false, bio?: string, imageUrl?: string): ProfileDto {
     this.username = username
