@@ -3,8 +3,8 @@ import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
 import { CreateCommentDto } from "../dto/create-comment.dto"
 import { CommentsService } from "../services/comments.service"
 import { CommentWithProfile, ExposedCommentDto } from "../dto/exposed-comment.dto"
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
-import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
+import { RequestingUserIdPipe } from "../../../pipes/requesting-user-id.pipe"
+import { ResponseMapper } from "../../../interceptors/dto-response-mapper.interceptor"
 import { ListCommentsDto } from "../dto/list-comments.dto"
 
 @Controller("/articles")

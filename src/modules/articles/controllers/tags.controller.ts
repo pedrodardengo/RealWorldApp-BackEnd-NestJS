@@ -1,6 +1,6 @@
 import { Controller, Get } from "@nestjs/common"
 import { TagsService } from "../services/tags.service"
-import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseMapper } from "../../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/tags")
 export class TagsController {

@@ -2,9 +2,9 @@ import { Controller, Delete, Get, Param, Post, UseGuards } from "@nestjs/common"
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
 import { ProfileDto } from "../dto/profile.dto"
 import { ProfilesService } from "../services/profiles.service"
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
+import { RequestingUserIdPipe } from "../../../pipes/requesting-user-id.pipe"
 import { UserWithFollowingInfo } from "../types/users.types"
-import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseMapper } from "../../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/profiles")
 @ResponseMapper(ProfileDto)

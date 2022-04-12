@@ -1,10 +1,10 @@
-import { UsersService } from "../../src/users/services/users.service"
+import { UsersService } from "../../src/modules/users/services/users.service"
 import { createMock, DeepMocked } from "@golevelup/ts-jest"
-import { User } from "../../src/users/entities/user.entity"
-import { TokenService } from "../../src/auth/services/token.service"
+import { User } from "../../src/modules/users/entities/user.entity"
+import { TokenService } from "../../src/modules/auth/services/token.service"
 import { Test, TestingModule } from "@nestjs/testing"
 import { getRepositoryToken } from "@nestjs/typeorm"
-import { UsersRepository } from "../../src/users/repositories/users.repository"
+import { UsersRepository } from "../../src/modules/users/repositories/users.repository"
 
 describe("UsersService", () => {
   let usersService: UsersService

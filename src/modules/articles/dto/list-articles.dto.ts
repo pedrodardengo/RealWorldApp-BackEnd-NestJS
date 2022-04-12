@@ -1,5 +1,5 @@
 import { ArticleWithProfile, ExposedArticleDto } from "./exposed-article.dto"
-import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseDTO } from "../../../interceptors/dto-response-mapper.interceptor"
 
 export class ListArticlesDto implements ResponseDTO {
   articles: ExposedArticleDto[]

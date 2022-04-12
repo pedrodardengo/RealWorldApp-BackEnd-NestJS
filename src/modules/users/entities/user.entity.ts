@@ -11,7 +11,7 @@ import {
 import { FollowRelation } from "./follow-relation.entity"
 import { Article } from "../../articles/entities/article.entity"
 import { Comment } from "../../articles/entities/comment.entity"
-import { hashPassword } from "src/auth/security/hash-password"
+import { hashPassword } from "src/modules/auth/security/hash-password"
 import { CreateUserDto } from "../dto/create-user.dto"
 
 @Entity({ name: "User" })

@@ -1,5 +1,5 @@
 import { ProfileDto } from "../../users/dto/profile.dto"
-import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseDTO } from "../../../interceptors/dto-response-mapper.interceptor"
 
 export class ExposedCommentDto implements ResponseDTO {
   id: number

@@ -7,8 +7,8 @@ import { FeedArticlesQuery } from "../types/feed-articles.query"
 import { UpdateArticleDto } from "../dto/update-article.dto"
 import { ArticleWithProfile, ExposedArticleDto } from "../dto/exposed-article.dto"
 import { ListArticlesDto } from "../dto/list-articles.dto"
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
-import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
+import { RequestingUserIdPipe } from "../../../pipes/requesting-user-id.pipe"
+import { ResponseMapper } from "../../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/articles")
 @UseGuards(JwtAuthGuard)

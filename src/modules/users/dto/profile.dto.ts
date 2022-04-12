@@ -1,5 +1,5 @@
 import { User } from "../entities/user.entity"
-import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseDTO } from "../../../interceptors/dto-response-mapper.interceptor"
 import { UserWithFollowingInfo } from "../types/users.types"
 
 export class ProfileDto implements ResponseDTO {

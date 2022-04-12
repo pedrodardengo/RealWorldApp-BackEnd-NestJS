@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing"
 import { JwtService } from "@nestjs/jwt"
 import { createMock, DeepMocked } from "@golevelup/ts-jest"
 import * as _ from "lodash"
-import { TokenService } from "../../src/auth/services/token.service"
+import { TokenService } from "../../src/modules/auth/services/token.service"
 import { UsersExampleBuilder } from "../example_fatcories/users.example-builder"
 
 describe("TokenServiceTest", () => {

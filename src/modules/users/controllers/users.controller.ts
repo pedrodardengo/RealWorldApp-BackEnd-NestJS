@@ -4,8 +4,8 @@ import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard"
 import { UpdateUserDto } from "../dto/update-user.dto"
 import { TokenizedUser } from "../types/users.types"
 import { UserDto } from "../dto/user.dto"
-import { RequestingUserIdPipe } from "../../pipes/requesting-user-id.pipe"
-import { ResponseMapper } from "../../interceptors/dto-response-mapper.interceptor"
+import { RequestingUserIdPipe } from "../../../pipes/requesting-user-id.pipe"
+import { ResponseMapper } from "../../../interceptors/dto-response-mapper.interceptor"
 
 @Controller("/user")
 @ResponseMapper(UserDto)

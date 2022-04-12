@@ -9,7 +9,7 @@ import { ProfileDto } from "../../users/dto/profile.dto"
 import { Article } from "../entities/article.entity"
 import { User } from "../../users/entities/user.entity"
 import { FollowRelation } from "../../users/entities/follow-relation.entity"
-import { ARTICLE_MESSAGES, AUTH_MESSAGES } from "../../exceptions/messages.exceptions"
+import { ARTICLE_MESSAGES, AUTH_MESSAGES } from "../../../exceptions/messages.exceptions"
 
 @Injectable()
 export class CommentsService {

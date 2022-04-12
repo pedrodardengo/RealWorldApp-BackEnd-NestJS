@@ -4,7 +4,7 @@ import { UpdateUserDto } from "../dto/update-user.dto"
 import { TokenService } from "../../auth/services/token.service"
 import { FindOption, TokenizedUser } from "../types/users.types"
 import { UsersRepository } from "../repositories/users.repository"
-import { USER_MESSAGES } from "../../exceptions/messages.exceptions"
+import { USER_MESSAGES } from "../../../exceptions/messages.exceptions"
 
 @Injectable()
 export class UsersService {

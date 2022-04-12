@@ -1,4 +1,4 @@
-import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseDTO } from "../../../interceptors/dto-response-mapper.interceptor"
 import { CommentWithProfile, ExposedCommentDto } from "./exposed-comment.dto"
 
 export class ListCommentsDto implements ResponseDTO {

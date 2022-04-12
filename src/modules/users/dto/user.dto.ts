@@ -1,4 +1,4 @@
-import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseDTO } from "../../../interceptors/dto-response-mapper.interceptor"
 import { TokenizedUser } from "../types/users.types"
 
 export class UserDto implements ResponseDTO {

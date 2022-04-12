@@ -1,6 +1,6 @@
 import { ProfileDto } from "../../users/dto/profile.dto"
 import { toInteger } from "lodash"
-import { ResponseDTO } from "../../interceptors/dto-response-mapper.interceptor"
+import { ResponseDTO } from "../../../interceptors/dto-response-mapper.interceptor"
 import { Tag } from "../entities/tag.entity"
 import { isString } from "class-validator"
 

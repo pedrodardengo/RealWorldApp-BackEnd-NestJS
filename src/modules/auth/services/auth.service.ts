@@ -5,7 +5,7 @@ import { LoginDto } from "../dto/login.dto"
 import { TokenService } from "./token.service"
 import { TokenizedUser } from "../../users/types/users.types"
 import { comparePasswordToHash } from "../security/hash-password"
-import { AUTH_MESSAGES } from "../../exceptions/messages.exceptions"
+import { AUTH_MESSAGES } from "../../../exceptions/messages.exceptions"
 
 @Injectable()
 export class AuthService {
