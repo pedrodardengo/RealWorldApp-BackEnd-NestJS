@@ -27,7 +27,10 @@ export class ArticlesRepository extends Repository<Article> {
       .getArticleBySlug(slug)
   }
 
-  async getMostRecentArticles(requestingUserId: number, articlesQuery: ArticlesQuery): Promise<MixedArticleData[]> {
+  async getMostRecentArticles(
+    requestingUserId: number,
+    articlesQuery: ArticlesQuery
+  ): Promise<MixedArticleData[]> {
     return await new SelectArticleQueryBuilder(this.manager)
       .selectMainFields()
       .filterByListOfTags(articlesQuery.tag)

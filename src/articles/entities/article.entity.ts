@@ -14,7 +14,7 @@ import {
 import { User } from "../../users/entities/user.entity"
 import { Tag } from "./tag.entity"
 import { Comment } from "./comment.entity"
-import { createSlug } from "../helper/create-slug.helper"
+import { createSlug } from "../tools/create-slug.tool"
 
 @Entity({ name: "Article" })
 export class Article {

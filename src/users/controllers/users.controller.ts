@@ -21,7 +21,10 @@ export class UsersController {
   }
 
   @Put()
-  async updateUser(@RequestingUserIdPipe() id: number, @Body("user") body: UpdateUserDto): Promise<TokenizedUser> {
+  async updateUser(
+    @RequestingUserIdPipe() id: number,
+    @Body("user") body: UpdateUserDto
+  ): Promise<TokenizedUser> {
     return await this.usersService.update(id, body)
   }
 }

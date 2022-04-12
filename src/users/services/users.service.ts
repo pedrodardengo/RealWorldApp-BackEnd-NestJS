@@ -30,7 +30,8 @@ export class UsersService {
   private async throwIfUserExists(user: CreateUserDto): Promise<void> {
     const dataFound = await this.usersRepo.findAUserByEmailOrUsername(user.email, user.username)
     if (dataFound === undefined) return
-    if (dataFound.email === user.email) throw new ConflictException(USER_MESSAGES.EMAIL_ALREADY_EXISTS(user.email))
+    if (dataFound.email === user.email)
+      throw new ConflictException(USER_MESSAGES.EMAIL_ALREADY_EXISTS(user.email))
     if (dataFound.username === user.username)
       throw new ConflictException(USER_MESSAGES.USERNAME_ALREADY_EXISTS(user.username))
   }

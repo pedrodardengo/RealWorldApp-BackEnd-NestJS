@@ -13,6 +13,8 @@ export class DataWrapperInterceptor implements NestInterceptor {
   constructor(private dataKey: string) {}
 
   intercept(context: ExecutionContext, next: CallHandler<unknown>): Observable<object> {
-    return next.handle().pipe(map((data: unknown) => ({ [this.dataKey]: data })))
+    return next.handle().pipe(
+        map((data: unknown) => ({ [this.dataKey]: data }))
+    )
   }
 }

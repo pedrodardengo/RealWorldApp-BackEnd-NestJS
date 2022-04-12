@@ -12,7 +12,10 @@ import { UsersRepository } from "../users/repositories/users.repository"
 import { ArticlesRepository } from "./repositories/articles.repository"
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersRepository, ArticlesRepository, Comment, Tag]), CacheModule.register()],
+  imports: [
+    TypeOrmModule.forFeature([UsersRepository, ArticlesRepository, Comment, Tag]),
+    CacheModule.register()
+  ],
   providers: [ArticlesService, CommentsService, TagsService],
   controllers: [ArticlesController, CommentsController, TagsController]
 })

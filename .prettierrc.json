@@ -2,5 +2,5 @@
   "trailingComma": "none",
   "semi": false,
   "singleAttributePerLine": false,
-  "printWidth": 120
+  "printWidth": 110
 }

@@ -22,7 +22,12 @@ export class ExposedCommentDto {
     this.body = rawResult.body
     this.createdAt = rawResult.createdAt
     this.updatedAt = rawResult.updatedAt
-    this.author = new ProfileDto().build(rawResult.username, rawResult.following, rawResult.bio, rawResult.imageUrl)
+    this.author = new ProfileDto().build(
+      rawResult.username,
+      rawResult.following,
+      rawResult.bio,
+      rawResult.imageUrl
+    )
     return this
   }
 }

@@ -34,7 +34,10 @@ export class ArticlesController {
 
   @dataWrapper("article")
   @Get("/:slug")
-  async getArticle(@RequestingUserIdPipe() id: number, @Param("slug") slug: string): Promise<ExposedArticleDto> {
+  async getArticle(
+    @RequestingUserIdPipe() id: number,
+    @Param("slug") slug: string
+  ): Promise<ExposedArticleDto> {
     return await this.articlesService.getArticle(id, slug)
   }
 
@@ -63,13 +66,19 @@ export class ArticlesController {
 
   @dataWrapper("article")
   @Post("/:slug/favorite")
-  async favoriteArticle(@RequestingUserIdPipe() id: number, @Param("slug") slug: string): Promise<ExposedArticleDto> {
+  async favoriteArticle(
+    @RequestingUserIdPipe() id: number,
+    @Param("slug") slug: string
+  ): Promise<ExposedArticleDto> {
     return await this.articlesService.changeArticleFavoritismStatus(true, id, slug)
   }
 
   @dataWrapper("article")
   @Delete("/:slug/favorite")
-  async unfavoriteArticle(@RequestingUserIdPipe() id: number, @Param("slug") slug: string): Promise<ExposedArticleDto> {
+  async unfavoriteArticle(
+    @RequestingUserIdPipe() id: number,
+    @Param("slug") slug: string
+  ): Promise<ExposedArticleDto> {
     return await this.articlesService.changeArticleFavoritismStatus(false, id, slug)
   }
 }

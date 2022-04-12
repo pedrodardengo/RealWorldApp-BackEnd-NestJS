@@ -10,7 +10,7 @@ import { ListArticlesDto } from "../dto/list-articles.dto"
 import { FeedArticlesQuery } from "../types/feed-articles.query"
 import { ARTICLE_MESSAGES, AUTH_MESSAGES } from "../../exceptions/messages.exceptions"
 import { UpdateArticleDto } from "../dto/update-article.dto"
-import { createSlug } from "../helper/create-slug.helper"
+import { createSlug } from "../tools/create-slug.tool"
 import { Article } from "../entities/article.entity"
 
 @Injectable()
@@ -42,7 +42,10 @@ export class ArticlesService {
     return new ListArticlesDto().mapFromMixedArticlesList(listMixedArticleData)
   }
 
-  async getFeedOfArticles(requestingUserId: number, feedArticleQuery: FeedArticlesQuery): Promise<ListArticlesDto> {
+  async getFeedOfArticles(
+    requestingUserId: number,
+    feedArticleQuery: FeedArticlesQuery
+  ): Promise<ListArticlesDto> {
     const listMixedArticleData = await this.articlesRepo.getMostRecentArticlesFromWhomUserFollows(
       requestingUserId,
       feedArticleQuery
@@ -84,14 +87,9 @@ export class ArticlesService {
   }
 
   private async findArticleOrThrow(slug: string): Promise<Article> {
-    try {
-      return await this.articlesRepo.findOneOrFail({
-        where: { slug },
-        relations: ["author"]
-      })
-    } catch (e) {
-      throw new NotFoundException(ARTICLE_MESSAGES.ARTICLE_NOT_FOUND(slug))
-    }
+    const article = await this.articlesRepo.findOne({ where: { slug }, relations: ["author"] })
+    if (!article) throw new NotFoundException(ARTICLE_MESSAGES.ARTICLE_NOT_FOUND(slug))
+    return article
   }
 
   private async throwIfTitleExists(title: string): Promise<void> {

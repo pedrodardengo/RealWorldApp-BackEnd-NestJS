@@ -71,6 +71,8 @@ export class CommentsService {
         "following"
       )
       .getRawMany()
-    return listMixedCommentData.map((mixedCommentData) => new ExposedCommentDto().mapFromMixedData(mixedCommentData))
+    return listMixedCommentData.map((mixedCommentData) =>
+      new ExposedCommentDto().mapFromMixedData(mixedCommentData)
+    )
   }
 }

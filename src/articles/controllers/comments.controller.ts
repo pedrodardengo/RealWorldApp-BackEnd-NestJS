@@ -32,7 +32,10 @@ export class CommentsController {
 
   @dataWrapper("comment")
   @Delete("/:slug/comments/:id")
-  async deleteComment(@RequestingUserIdPipe() requestingUserId: number, @Param("id") id: number): Promise<void> {
+  async deleteComment(
+    @RequestingUserIdPipe() requestingUserId: number,
+    @Param("id") id: number
+  ): Promise<void> {
     return this.commentsService.deleteComment(requestingUserId, id)
   }
 }
