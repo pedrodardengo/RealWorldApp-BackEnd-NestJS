@@ -1,18 +1,18 @@
 import {
-  BeforeInsert,
-  BeforeUpdate,
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn
 } from "typeorm"
 import { FollowRelation } from "./follow-relation.entity"
 import { Article } from "../../articles/entities/article.entity"
 import { Comment } from "../../articles/entities/comment.entity"
-import { hashPassword } from "src/modules/auth/security/hash-password"
 import { CreateUserDto } from "../dto/create-user.dto"
+import { Password } from "../../auth/entities/password.entity"
 
 @Entity({ name: "User" })
 export class User {
@@ -24,9 +24,6 @@ export class User {
 
   @Column({ unique: true })
   email: string
-
-  @Column()
-  password: string
 
   @Column({ nullable: true })
   bio?: string
@@ -47,16 +44,12 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.author)
   comments: Comment[]
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword(): Promise<string> {
-    if (this.password.length < 32) this.password = await hashPassword(this.password)
-    return this.password
-  }
+  @OneToOne(() => Password, (password) => password.user)
+  @JoinColumn()
+  password: Password
 
   build(incomingUser: CreateUserDto): User {
     this.username = incomingUser.username
-    this.password = incomingUser.password
     this.email = incomingUser.email
     if (incomingUser.bio) this.bio = incomingUser.bio
     if (incomingUser.imageUrl) this.imageUrl = incomingUser.imageUrl

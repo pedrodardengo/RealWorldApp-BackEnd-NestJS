@@ -5,15 +5,15 @@ import { TokenService } from "../../auth/services/token.service"
 import { FindOption, TokenizedUser } from "../types/users.types"
 import { UsersRepository } from "../repositories/users.repository"
 import { USER_MESSAGES } from "../../../exceptions/messages.exceptions"
+import { User } from "../entities/user.entity"
 
 @Injectable()
 export class UsersService {
   constructor(private usersRepo: UsersRepository, private tokenService: TokenService) {}
 
-  async registerUser(incomingUser: CreateUserDto): Promise<TokenizedUser> {
+  async registerUser(incomingUser: CreateUserDto): Promise<User> {
     await this.throwIfUserExists(incomingUser)
-    const user = await this.usersRepo.createAndSave(incomingUser)
-    return await this.tokenService.addTokenToUser(user)
+    return await this.usersRepo.createAndSave(incomingUser)
   }
 
   async getUserWithToken(option: FindOption): Promise<TokenizedUser> {

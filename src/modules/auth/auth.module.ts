@@ -7,10 +7,14 @@ import { AuthController } from "./controllers/auth.controller"
 import { JwtStrategy } from "./security/jwt.strategy"
 import { TokenService } from "./services/token.service"
 import { ConfigService } from "@nestjs/config"
+import { TypeOrmModule } from "@nestjs/typeorm"
+import { UsersRepository } from "../users/repositories/users.repository"
+import { PasswordRepository } from "../users/repositories/password.repository"
 
 @Module({
   imports: [
     forwardRef(() => UsersModule),
+    TypeOrmModule.forFeature([UsersRepository, PasswordRepository]),
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

@@ -9,6 +9,7 @@ import { Article } from "./modules/articles/entities/article.entity"
 import { Comment } from "./modules/articles/entities/comment.entity"
 import { Tag } from "./modules/articles/entities/tag.entity"
 import { ConfigModule, ConfigService } from "@nestjs/config"
+import { Password } from "./modules/auth/entities/password.entity"
 
 @Module({
   imports: [
@@ -25,8 +26,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config"
           port: config.get("DB_PORT"),
           username: config.get("DB_USERNAME"),
           password: config.get("DB_PASSWORD"),
-          database: config.get("DB_USERNAME"),
-          entities: [User, FollowRelation, Article, Comment, Tag],
+          database: config.get("DB_NAME"),
+          entities: [User, FollowRelation, Article, Comment, Tag, Password],
           synchronize: true
         }
       }
