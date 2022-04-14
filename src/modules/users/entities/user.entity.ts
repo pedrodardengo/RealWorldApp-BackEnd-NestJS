@@ -11,7 +11,6 @@ import {
 import { FollowRelation } from "./follow-relation.entity"
 import { Article } from "../../articles/entities/article.entity"
 import { Comment } from "../../articles/entities/comment.entity"
-import { CreateUserDto } from "../dto/create-user.dto"
 import { Password } from "../../auth/entities/password.entity"
 
 @Entity({ name: "User" })
@@ -47,12 +46,4 @@ export class User {
   @OneToOne(() => Password, (password) => password.user)
   @JoinColumn()
   password: Password
-
-  build(incomingUser: CreateUserDto): User {
-    this.username = incomingUser.username
-    this.email = incomingUser.email
-    if (incomingUser.bio) this.bio = incomingUser.bio
-    if (incomingUser.imageUrl) this.imageUrl = incomingUser.imageUrl
-    return this
-  }
 }

@@ -1,5 +1,4 @@
 import { ConflictException, Injectable } from "@nestjs/common"
-import { CreateUserDto } from "../dto/create-user.dto"
 import { UpdateUserDto } from "../dto/update-user.dto"
 import { TokenService } from "../../auth/services/token.service"
 import { FindOption, TokenizedUser } from "../types/users.types"
@@ -11,7 +10,7 @@ import { User } from "../entities/user.entity"
 export class UsersService {
   constructor(private usersRepo: UsersRepository, private tokenService: TokenService) {}
 
-  async registerUser(incomingUser: CreateUserDto): Promise<User> {
+  async registerUser(incomingUser: UpdateUserDto): Promise<User> {
     await this.throwIfUserExists(incomingUser)
     return await this.usersRepo.createAndSave(incomingUser)
   }
@@ -23,11 +22,11 @@ export class UsersService {
   }
 
   async update(id: number, updateUserData: UpdateUserDto): Promise<TokenizedUser> {
-    const user = await this.usersRepo.updateUserReturningIt(id, updateUserData)
+    const user = await this.usersRepo.save({ id, ...updateUserData })
     return this.tokenService.addTokenToUser(user)
   }
 
-  private async throwIfUserExists(user: CreateUserDto): Promise<void> {
+  private async throwIfUserExists(user: UpdateUserDto): Promise<void> {
     const dataFound = await this.usersRepo.findAUserByEmailOrUsername(user.email, user.username)
     if (dataFound === undefined) return
     if (dataFound.email === user.email)

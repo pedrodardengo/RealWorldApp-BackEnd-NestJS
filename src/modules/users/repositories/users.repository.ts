@@ -1,18 +1,18 @@
 import { EntityRepository, Repository } from "typeorm"
 import { User } from "../entities/user.entity"
 import { CreateUserDto } from "../dto/create-user.dto"
-import { UpdateUserDto } from "../dto/update-user.dto"
 import { FollowRelation } from "../entities/follow-relation.entity"
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
-  async createAndSave(incomingUser: CreateUserDto): Promise<User> {
-    const user = new User().build(incomingUser)
+  async createAndSave(incomingUser: Partial<CreateUserDto>): Promise<User> {
+    const user = this.manager.getRepository(User).create({
+      username: incomingUser.username,
+      email: incomingUser.email,
+      imageUrl: incomingUser.imageUrl,
+      bio: incomingUser.bio
+    })
     return await this.manager.save(user)
-  }
-
-  async updateUserReturningIt(id: number, updateUserData: UpdateUserDto): Promise<User> {
-    return await this.manager.getRepository(User).save({ id, ...updateUserData })
   }
 
   async findAUserByEmailOrUsername(email: string, username: string): Promise<User> {

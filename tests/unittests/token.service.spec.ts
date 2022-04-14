@@ -34,8 +34,8 @@ describe("TokenServiceTest", () => {
 
   it("should return tokenized user", async () => {
     //Arrange
-    const user = userExampleFactory.user
-    const tokenizedUser = userExampleFactory.tokenizedUser
+    const user = userExampleFactory.generateUser().user
+    const tokenizedUser = userExampleFactory.generateTokenizedUser().tokenizedUser
     jwtServiceMock.signAsync.mockResolvedValueOnce(tokenizedUser.token)
 
     //Act

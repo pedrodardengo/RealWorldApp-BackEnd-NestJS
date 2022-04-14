@@ -1,58 +1,34 @@
 import { Injectable } from "@nestjs/common"
 import * as faker from "faker"
+import { LoginDto } from "../../src/modules/auth/dto/login.dto"
+import { User } from "../../src/modules/users/entities/user.entity"
+import { TokenizedUser } from "../../src/modules/users/types/users.types"
 
 @Injectable()
 export class UsersExampleBuilder {
-  user: any
-  login: any
-  tokenizedUser: any
-  private readonly token: string
+  user: User
+  login: LoginDto
+  tokenizedUser: TokenizedUser
 
-  constructor() {
-    this.user = {
-      id: faker.datatype.number({ min: 1, max: 1000, precision: 1 }),
-      username: faker.internet.userName(),
-      email: faker.internet.email(),
-      password: faker.internet.password(),
-      bio: faker.lorem.paragraph(1),
-      imageUrl: faker.internet.url()
-    }
-    this.loginExample()
-    this.tokenizedUserExample()
-    this.token = faker.datatype.string(10)
+  generateUser(): UsersExampleBuilder {
+    this.user = new User()
+    this.user.username = faker.internet.userName()
+    this.user.email = faker.internet.email()
+    this.user.bio = faker.lorem.paragraph()
+    this.user.imageUrl = faker.internet.url()
+    return this
   }
 
-  // private updateRelated() {
-  //     this.loginExample()
-  //     this.tokenizedUserExample()
-  // }
-
-  private loginExample(): void {
+  generateLoginDto(): UsersExampleBuilder {
     this.login = {
       email: this.user.email,
-      password: this.user.password
+      password: faker.internet.password()
     }
+    return this
   }
 
-  private tokenizedUserExample(): void {
-    this.tokenizedUser = Object.assign({ token: this.token }, this.user)
+  generateTokenizedUser() {
+    this.tokenizedUser = { token: faker.datatype.string(10), ...this.user }
+    return this
   }
-
-  // numberLessPassword() {
-  //     this.user.password = faker.internet.password( ... )
-  //     this.updateRelated()
-  //     return this
-  // }
-
-  // shortPassword() {
-  //     this.user.password = faker.internet.password( ... )
-  //     this.updateRelated()
-  //     return this
-  // }
-
-  // symbolLessPassword() {
-  //     this.user.password = faker.internet.password( ... )
-  //     this.updateRelated()
-  //     return this
-  // }
 }
